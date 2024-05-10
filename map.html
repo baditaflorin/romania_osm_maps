@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Drinking Water Locations in Romania</title>
+    <link href="https://unpkg.com/leaflet/dist/leaflet.css" rel="stylesheet"/>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .blue-icon {
+            filter: hue-rotate(10deg) brightness(0.7) saturate(200.5);
+            border-radius: 50%;
+            box-shadow: 0 0 5px #000;
+        }
+
+        #mapid {
+            width: 100vw; /* 100% of the viewport width */
+            height: 100vh; /* 100% of the viewport height */
+        }
+
+        #title {
+            position: absolute;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.8);
+            margin: 0;
+            padding: 10px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+
+
+</head>
+<body>
+<div id="title" style="margin: 20px; font-size: 20px; font-weight: bold; text-align: center;"></div>
+<!--<div id="overlay" style="position: absolute; top: 20px; left: 20px; z-index: 1000; background: rgba(255, 255, 255, 0.8); padding: 10px; border-radius: 5px;">-->
+<!--    <h4>Map Instructions</h4>-->
+<!--    <p>Click on any marker to see details about the drinking water location.</p>-->
+<!--</div>-->
+<div id="mapid"></div>
+<script>
+    var mymap = L.map('mapid').setView([45.9432, 24.9668], 7);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+    }).addTo(mymap);
+
+    var waterIcon = L.icon({
+        iconUrl: '/water_icon.png',
+        iconSize: [32, 37], // size of the icon
+        iconAnchor: [16, 37], // point of the icon which will correspond to marker's location
+        popupAnchor: [0, -28], // point from which the popup should open relative to the iconAnchor
+        className: 'blue-icon' // Apply the CSS class to the icon
+    });
+
+    // Fetch the data from static/data.json
+    $.getJSON('/data.json', function (data) {
+        data.forEach(function (node) {
+            var popupContent = '<b>Drinking Water Node</b><br>';
+            for (var key in node.tags) {
+                popupContent += key + ': ' + node.tags[key] + '<br>';
+            }
+            popupContent += '<a href="https://www.openstreetmap.org/edit?editor=id&node=' + node.id + '" target="_blank">Edit this node</a>';
+            L.marker([node.lat, node.lon], {icon: waterIcon}).addTo(mymap)
+                .bindPopup(popupContent);
+        });
+        updateTitleAndCount(data.length);
+    });
+
+    function updateTitleAndCount(count) {
+        document.getElementById('title').innerHTML = 'Drinking Water Locations in Romania: ' + count + ' locations found';
+    }
+</script>
+</script>
+</body>
+</html>
