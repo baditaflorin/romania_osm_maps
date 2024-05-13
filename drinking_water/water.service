@@ -1,0 +1,15 @@
+[Unit]
+Description=Water sources map RO
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=root
+WorkingDirectory=/opt/water
+ExecStart=/opt/water/backend
+
+[Install]
+WantedBy=multi-user.target
