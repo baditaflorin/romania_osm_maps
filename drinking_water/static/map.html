@@ -3,8 +3,11 @@
 <head>
     <title>Drinking Water Locations in Romania</title>
     <link href="https://unpkg.com/leaflet/dist/leaflet.css" rel="stylesheet"/>
+    <link href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" rel="stylesheet"/>
+    <link href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" rel="stylesheet"/>
     <link rel="stylesheet" href="static/style.css">
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://unpkg.com/@mapbox/polyline@1.1.1/src/polyline.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.1/js.cookie.min.js"></script>
@@ -66,6 +69,9 @@
         setUrlParameter('zoom', mymap.getZoom());
         saveMapCenterToCookies(mymap);
     });
+
+    // Marker cluster group
+    const markers = L.markerClusterGroup();
 
     // Icon definition
     const waterIcon = L.icon({
@@ -172,11 +178,12 @@
                 <br>
                 <button onclick="routeToNode(${node.lat.toFixed(6)},${node.lon.toFixed(6)})" class="route-button">Route to here</button>
             </div>`;
-            L.marker([node.lat, node.lon], { icon: waterIcon }).addTo(mymap).bindPopup(popupContent);
+            const marker = L.marker([node.lat, node.lon], { icon: waterIcon }).bindPopup(popupContent);
+            markers.addLayer(marker);
         });
+        mymap.addLayer(markers);
         updateTitleAndCount(data.length);
     });
-
 
     // Function to update the title and count of the elements
     const updateTitleAndCount = (count) => {
