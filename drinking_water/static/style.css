@@ -1,0 +1,64 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.blue-icon {
+    filter: hue-rotate(10deg) brightness(0.7) saturate(200.5);
+    border-radius: 50%;
+    box-shadow: 0 0 5px #000;
+}
+
+#mapid {
+    width: 100vw;
+    height: 100vh;
+}
+
+#title {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.8);
+    margin: 0;
+    padding: 10px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#instructions-container {
+    position: absolute;
+    width: 30%;
+    top: 50px;
+    right: 10px;
+    z-index: 1000;
+}
+
+#toggle-instructions {
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+#instructions {
+    background: rgba(255, 255, 255, 0.8);
+    margin: 0;
+    padding: 10px;
+    border-radius: 5px;
+    max-height: 400px;
+    overflow-y: auto;
+    display: none; /* Initially hidden */
+}
+
+@media (max-width: 768px) {
+    #instructions-container {
+        width: 80%;
+        right: 10px;
+        top: 100px;
+    }
+}

@@ -3,74 +3,197 @@
 <head>
     <title>Drinking Water Locations in Romania</title>
     <link href="https://unpkg.com/leaflet/dist/leaflet.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="static/style.css"> <!-- Corrected path -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
-        .blue-icon {
-            filter: hue-rotate(10deg) brightness(0.7) saturate(200.5);
-            border-radius: 50%;
-            box-shadow: 0 0 5px #000;
-        }
-
-        #mapid {
-            width: 100vw; /* 100% of the viewport width */
-            height: 100vh; /* 100% of the viewport height */
-        }
-
-        #title {
-            position: absolute;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.8);
-            margin: 0;
-            padding: 10px;
-            font-size: 20px;
-            font-weight: bold;
-        }
-    </style>
-
-
+    <script src="https://unpkg.com/@mapbox/polyline@1.1.1/src/polyline.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.1/js.cookie.min.js"></script>
 </head>
 <body>
-<div id="title" style="margin: 20px; font-size: 20px; font-weight: bold; text-align: center;"></div>
-<!--<div id="overlay" style="position: absolute; top: 20px; left: 20px; z-index: 1000; background: rgba(255, 255, 255, 0.8); padding: 10px; border-radius: 5px;">-->
-<!--    <h4>Map Instructions</h4>-->
-<!--    <p>Click on any marker to see details about the drinking water location.</p>-->
-<!--</div>-->
+<div id="title"></div>
 <div id="mapid"></div>
+<div id="instructions-container">
+    <button id="toggle-instructions">Show Route Instructions</button>
+    <div id="instructions"></div>
+</div>
 <script>
-    var mymap = L.map('mapid').setView([45.9432, 24.9668], 7);
+    // Function to read URL parameters
+    function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        var results = regex.exec(location.search);
+        return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
+    // Function to set URL parameters
+    function setUrlParameter(key, value) {
+        var baseUrl = [location.protocol, '//', location.host, location.pathname].join('');
+        var urlQueryString = document.location.search;
+        var newParam = key + '=' + value;
+        var params = '?' + newParam;
+
+        if (urlQueryString) {
+            var keyRegex = new RegExp('([?&])' + key + '[^&]*');
+
+            if (urlQueryString.match(keyRegex) !== null) {
+                params = urlQueryString.replace(keyRegex, "$1" + newParam);
+            } else {
+                params = urlQueryString + '&' + newParam;
+            }
+        }
+        window.history.replaceState({}, '', baseUrl + params);
+    }
+
+    // Function to save map center coordinates and zoom level in cookies
+    function saveMapCenterToCookies() {
+        var center = mymap.getCenter();
+        var zoom = mymap.getZoom();
+        Cookies.set('mapLat', center.lat, { expires: 2 });
+        Cookies.set('mapLon', center.lng, { expires: 2 });
+        Cookies.set('mapZoom', zoom, { expires: 2 });
+    }
+
+    // Get initial map coordinates and zoom level from URL parameters or cookies
+    var initialLat = getUrlParameter('lat') || Cookies.get('mapLat') || 45.9432;
+    var initialLon = getUrlParameter('lon') || Cookies.get('mapLon') || 24.9668;
+    var initialZoom = parseInt(getUrlParameter('zoom')) || parseInt(Cookies.get('mapZoom')) || 7;
+
+    var mymap = L.map('mapid').setView([initialLat, initialLon], initialZoom);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '© OpenStreetMap'
     }).addTo(mymap);
 
+    mymap.on('moveend', function() {
+        var center = mymap.getCenter();
+        setUrlParameter('lat', center.lat);
+        setUrlParameter('lon', center.lng);
+        setUrlParameter('zoom', mymap.getZoom());
+        saveMapCenterToCookies();
+    });
+
+    mymap.on('zoomend', function() {
+        setUrlParameter('zoom', mymap.getZoom());
+        saveMapCenterToCookies();
+    });
+
     var waterIcon = L.icon({
         iconUrl: '/static/water_icon.png',
-        iconSize: [32, 37], // size of the icon
-        iconAnchor: [16, 37], // point of the icon which will correspond to marker's location
-        popupAnchor: [0, -28], // point from which the popup should open relative to the iconAnchor
-        className: 'blue-icon' // Apply the CSS class to the icon
+        iconSize: [32, 37],
+        iconAnchor: [16, 37],
+        popupAnchor: [0, -28],
+        className: 'blue-icon'
+    });
+
+    var routeLayer;
+    var highlightedSegment;
+
+    // Function to get the user's current position
+    function getUserPosition(callback) {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(callback, function(error) {
+                console.error("Error getting user position:", error);
+            });
+        } else {
+            console.error("Geolocation is not supported by this browser.");
+        }
+    }
+
+    // Function to draw the route on the map
+    function drawRoute(route, steps) {
+        if (routeLayer) {
+            mymap.removeLayer(routeLayer);
+        }
+        var routeCoordinates = polyline.decode(route);
+        routeLayer = L.polyline(routeCoordinates, {color: 'blue'}).addTo(mymap);
+        mymap.fitBounds(routeLayer.getBounds());
+
+        var instructions = document.getElementById('instructions');
+        instructions.innerHTML = '<h4>Route Instructions</h4>';
+        steps.forEach(function(step, index) {
+            var stepHtml = '<p id="step-' + index + '" class="step-instruction">' + (index + 1) + '. ' + getStepInstruction(step) + ' (' + step.distance.toFixed(1) + ' meters)</p>';
+            instructions.innerHTML += stepHtml;
+        });
+
+        // Add event listeners after DOM elements have been created
+        steps.forEach(function(step, index) {
+            document.getElementById('step-' + index).addEventListener('click', function() {
+                highlightSegment(step);
+            });
+        });
+    }
+
+    // Function to generate step instructions
+    function getStepInstruction(step) {
+        var instruction = '';
+        if (step.maneuver.type === 'depart') {
+            instruction = 'Start on ' + (step.name || 'the road');
+        } else if (step.maneuver.type === 'arrive') {
+            instruction = 'Arrive at your destination';
+        } else {
+            var modifier = step.maneuver.modifier || '';
+            var action = step.maneuver.type || '';
+            if (modifier) {
+                instruction = 'Turn ' + modifier + ' onto ' + (step.name || 'the road');
+            } else {
+                instruction = 'Continue on ' + (step.name || 'the road');
+            }
+        }
+        return instruction;
+    }
+
+    // Function to highlight and zoom to a specific route segment
+    function highlightSegment(step) {
+        if (highlightedSegment) {
+            mymap.removeLayer(highlightedSegment);
+        }
+        var segmentCoordinates = polyline.decode(step.geometry);
+        highlightedSegment = L.polyline(segmentCoordinates, {color: 'red', weight: 5}).addTo(mymap);
+        mymap.fitBounds(highlightedSegment.getBounds());
+    }
+
+    // Function to route to a node from the user's current position
+    function routeToNode(lat, lon) {
+        getUserPosition(function(position) {
+            var userLat = position.coords.latitude;
+            var userLon = position.coords.longitude;
+            var routingUrl = 'https://routing.openstreetmap.de/routed-foot/route/v1/driving/' +
+                userLon + ',' + userLat + ';' + lon + ',' + lat + '?overview=full&steps=true&geometries=polyline';
+
+            $.getJSON(routingUrl, function(data) {
+                if (data.code === 'Ok') {
+                    var route = data.routes[0].geometry;
+                    var steps = data.routes[0].legs[0].steps;
+                    drawRoute(route, steps);
+                    document.getElementById('toggle-instructions').style.display = 'block';
+                } else {
+                    console.error("Error fetching route:", data);
+                }
+            });
+        });
+    }
+
+    // Toggle instructions visibility
+    document.getElementById('toggle-instructions').addEventListener('click', function() {
+        var instructions = document.getElementById('instructions');
+        if (instructions.style.display === 'none') {
+            instructions.style.display = 'block';
+            this.textContent = 'Hide Route Instructions';
+        } else {
+            instructions.style.display = 'none';
+            this.textContent = 'Show Route Instructions';
+        }
     });
 
     // Fetch the data and add markers using the custom icon
     $.getJSON('/data', function (data) {
         data.forEach(function (node) {
             var popupContent = '<b>Drinking Water Node</b><br>';
-            // Iterate over each tag and add to popup content
             for (var key in node.tags) {
                 popupContent += key + ': ' + node.tags[key] + '<br>';
             }
-            // Add link to edit node in OpenStreetMap
             popupContent += '<a href="https://www.openstreetmap.org/edit?editor=id&node=' + node.id + '" target="_blank">Edit this node</a>';
+            popupContent += '<br><button onclick="routeToNode(' + node.lat + ',' + node.lon + ')">Route to here</button>';
             L.marker([node.lat, node.lon], {icon: waterIcon}).addTo(mymap)
                 .bindPopup(popupContent);
         });

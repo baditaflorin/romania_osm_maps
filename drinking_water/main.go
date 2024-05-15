@@ -59,6 +59,7 @@ func handleData(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(waterNodes.Elements)
 }
 
+// main function sets up the HTTP server
 func main() {
 	// Fetch water nodes on server start
 	fetchWaterNodes()
