@@ -178,16 +178,23 @@
     $.getJSON('/data', (data) => {
         data.forEach((node) => {
             let icon;
+            let denumire;
             if (node.tags.amenity === 'drinking_water') {
                 icon = waterIcon;
+                denumire = "Drinking Water";
             } else if (node.tags.man_made === 'water_well') {
                 const safe = node.tags.drinking_water === 'yes';
                 icon = waterWellIcon(safe);
+                denumire = "Water Well";
+            } else if (node.tags.natural === 'spring') {
+                const safe = node.tags.drinking_water === 'yes';
+                icon = waterWellIcon(safe);
+                denumire = "Spring";
             }
 
             const popupContent = `
             <div class="popup-content">
-                <b>${node.tags.amenity ? 'Drinking Water Node' : 'Water Well'}</b><br>
+                <b>${denumire}</b><br>
                 ${Object.entries(node.tags).map(([key, value]) => `${key}: ${value}`).join('<br>')}
                 <br>
                 <a href="https://www.openstreetmap.org/edit?editor=id&node=${node.id}" target="_blank" class="edit-link">Edit this node</a>

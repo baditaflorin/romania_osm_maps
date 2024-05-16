@@ -32,6 +32,7 @@ area["ISO3166-1"="RO"][boundary=administrative]->.searchArea;
 (
   node["man_made"="water_well"](area.searchArea);
   node["amenity"="drinking_water"](area.searchArea);
+  node["natural"="spring"](area.searchArea);
 );
 out body;
 >;
