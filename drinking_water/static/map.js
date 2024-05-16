@@ -29,4 +29,7 @@ document.addEventListener("DOMContentLoaded", function() {
     window.highlightedSegment = null;
 
     fetchDataAndAddMarkers();
+
+    // Add the search functionality
+    addSearchControl();
 });
