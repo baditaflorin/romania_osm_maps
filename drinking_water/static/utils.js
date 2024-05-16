@@ -5,13 +5,17 @@ const getUrlParameter = (name) => {
     return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, ' '));
 };
 
-const setUrlParameter = (key, value) => {
-    const baseUrl = [location.protocol, '//', location.host, location.pathname].join('');
-    const urlQueryString = document.location.search;
-    const newParam = `${key}=${value}`;
-    const params = urlQueryString ? urlQueryString.replace(new RegExp(`([?&])${key}[^&]*`), `$1${newParam}`) : `?${newParam}`;
-    window.history.replaceState({}, '', baseUrl + params);
+const setUrlParameters = (params) => {
+    const baseUrl = `${location.protocol}//${location.host}${location.pathname}`;
+    const urlParams = new URLSearchParams(location.search);
+
+    for (const key in params) {
+        urlParams.set(key, params[key]);
+    }
+
+    window.history.replaceState({}, '', `${baseUrl}?${urlParams.toString()}`);
 };
+
 
 // Update the title and count of the elements
 const updateTitleAndCount = (count) => {
@@ -36,13 +40,13 @@ const getStepInstruction = (step) => {
 
 const saveMapCenterToCookies = (mymap) => {
     const center = mymap.getCenter();
-    const zoom = mymap.getZoom();
+    const z = mymap.getZoom();
     const lat = center.lat.toFixed(6);
     const lon = center.lng.toFixed(6);
 
     Cookies.set('mapLat', lat, { expires: 2 });
     Cookies.set('mapLon', lon, { expires: 2 });
-    Cookies.set('mapZoom', zoom, { expires: 2 });
+    Cookies.set('mapZoom', z, { expires: 2 });
 };
 
 // Function to get the user's current position
