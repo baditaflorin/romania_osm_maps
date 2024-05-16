@@ -10,20 +10,18 @@ document.addEventListener("DOMContentLoaded", function() {
         attribution: '© OpenStreetMap'
     }).addTo(mymap);
 
-    mymap.on('moveend', () => {
+    const updateMapState = () => {
         const center = mymap.getCenter();
         setUrlParameter('lat', center.lat.toFixed(6));
         setUrlParameter('lon', center.lng.toFixed(6));
         setUrlParameter('zoom', mymap.getZoom());
         saveMapCenterToCookies(mymap);
-    });
+    };
 
-    mymap.on('zoomend', () => {
-        setUrlParameter('zoom', mymap.getZoom());
-        saveMapCenterToCookies(mymap);
-    });
+    mymap.on('moveend', updateMapState);
+    mymap.on('zoomend', updateMapState);
 
-    // Make routeLayer and highlightedSegment globally accessible
     window.routeLayer = null;
     window.highlightedSegment = null;
 });
+
