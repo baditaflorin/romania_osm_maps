@@ -4,8 +4,11 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="add man_made=water_well , coloring for drinking water yes/no">
+    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="add natural=spring">
+      <change afterPath="$PROJECT_DIR$/drinking_water/static/main.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/drinking_water/utils.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/drinking_water/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/drinking_water/static/map.html" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/static/map.html" afterDir="false" />
     </list>
@@ -13,6 +16,13 @@
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go File" />
+      </list>
+    </option>
   </component>
   <component name="GOROOT" url="file:///opt/homebrew/opt/go/libexec" />
   <component name="Git.Settings">
@@ -40,6 +50,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "DefaultGoTemplateProperty": "Go File",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.go.formatter.settings.were.checked": "true",
     "RunOnceActivity.go.migrated.go.modules.settings": "true",
@@ -81,7 +92,8 @@
     <MESSAGE value="add apple style route" />
     <MESSAGE value="implement clustering" />
     <MESSAGE value="add man_made=water_well , coloring for drinking water yes/no" />
-    <option name="LAST_COMMIT_MESSAGE" value="add man_made=water_well , coloring for drinking water yes/no" />
+    <MESSAGE value="add natural=spring" />
+    <option name="LAST_COMMIT_MESSAGE" value="add natural=spring" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
