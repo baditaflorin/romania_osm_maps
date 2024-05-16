@@ -10,13 +10,16 @@ import (
 
 // OSMData represents the structure of the response from the Overpass API
 type OSMData struct {
-	Elements []struct {
-		Type string            `json:"type"`
-		ID   int64             `json:"id"`
-		Lat  float64           `json:"lat"`
-		Lon  float64           `json:"lon"`
-		Tags map[string]string `json:"tags"`
-	} `json:"elements"`
+	Elements []OSMNode `json:"elements"`
+}
+
+// OSMNode represents a node element in the OSM data
+type OSMNode struct {
+	Type string            `json:"type"`
+	ID   int64             `json:"id"`
+	Lat  float64           `json:"lat"`
+	Lon  float64           `json:"lon"`
+	Tags map[string]string `json:"tags"`
 }
 
 // Global variable to store the nodes
@@ -46,7 +49,6 @@ func fetchWaterNodes() {
 	out body;
 	>;
 	out skel qt;
-
     `
 	resp, err := http.Post(url, "text/plain", strings.NewReader(query))
 	if err != nil {
@@ -58,9 +60,24 @@ func fetchWaterNodes() {
 		log.Fatalf("Error reading response from Overpass API: %s", err)
 	}
 
-	err = json.Unmarshal(body, &waterNodes)
+	var tempNodes OSMData
+	err = json.Unmarshal(body, &tempNodes)
 	if err != nil {
 		log.Fatalf("Error parsing JSON: %s", err)
+	}
+
+	// Filter out duplicate nodes
+	nodeMap := make(map[int64]OSMNode)
+	for _, node := range tempNodes.Elements {
+		if _, exists := nodeMap[node.ID]; !exists {
+			nodeMap[node.ID] = node
+		}
+	}
+
+	// Convert map back to slice
+	waterNodes.Elements = make([]OSMNode, 0, len(nodeMap))
+	for _, node := range nodeMap {
+		waterNodes.Elements = append(waterNodes.Elements, node)
 	}
 }
 

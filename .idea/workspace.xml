@@ -7,9 +7,6 @@
     <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="making the code more modular, add functional prog style">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/drinking_water/static/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/static/data.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drinking_water/static/map.js" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/static/map.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drinking_water/static/routing.js" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/static/routing.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drinking_water/static/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/static/utils.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/drinking_water/utils.go" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/utils.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
