@@ -73,13 +73,21 @@
     // Marker cluster group
     const markers = L.markerClusterGroup();
 
-    // Icon definition
+    // Icon definitions
     const waterIcon = L.icon({
         iconUrl: '/static/water_icon.png',
         iconSize: [32, 37],
         iconAnchor: [16, 37],
         popupAnchor: [0, -28],
         className: 'blue-icon'
+    });
+
+    const waterWellIcon = (safe) => L.icon({
+        iconUrl: safe ? '/static/water_icon.png' : '/static/water_icon.png',
+        iconSize: [32, 37],
+        iconAnchor: [16, 37],
+        popupAnchor: [0, -28],
+        className: safe ? 'green-icon' : 'red-icon'
     });
 
     let routeLayer;
@@ -169,16 +177,24 @@
     // Fetch the data and add markers using the custom icon
     $.getJSON('/data', (data) => {
         data.forEach((node) => {
+            let icon;
+            if (node.tags.amenity === 'drinking_water') {
+                icon = waterIcon;
+            } else if (node.tags.man_made === 'water_well') {
+                const safe = node.tags.drinking_water === 'yes';
+                icon = waterWellIcon(safe);
+            }
+
             const popupContent = `
             <div class="popup-content">
-                <b>Drinking Water Node</b><br>
+                <b>${node.tags.amenity ? 'Drinking Water Node' : 'Water Well'}</b><br>
                 ${Object.entries(node.tags).map(([key, value]) => `${key}: ${value}`).join('<br>')}
                 <br>
                 <a href="https://www.openstreetmap.org/edit?editor=id&node=${node.id}" target="_blank" class="edit-link">Edit this node</a>
                 <br>
                 <button onclick="routeToNode(${node.lat.toFixed(6)},${node.lon.toFixed(6)})" class="route-button">Route to here</button>
             </div>`;
-            const marker = L.marker([node.lat, node.lon], { icon: waterIcon }).bindPopup(popupContent);
+            const marker = L.marker([node.lat, node.lon], { icon }).bindPopup(popupContent);
             markers.addLayer(marker);
         });
         mymap.addLayer(markers);

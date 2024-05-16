@@ -27,10 +27,16 @@ var waterNodes OSMData
 func fetchWaterNodes() {
 	url := "https://overpass-api.de/api/interpreter"
 	query := `
-    [out:json];
-    area["ISO3166-1"="RO"][boundary=administrative];
-    node[amenity=drinking_water](area);
-    out;
+[out:json];
+area["ISO3166-1"="RO"][boundary=administrative]->.searchArea;
+(
+  node["man_made"="water_well"](area.searchArea);
+  node["amenity"="drinking_water"](area.searchArea);
+);
+out body;
+>;
+out skel qt;
+
     `
 	resp, err := http.Post(url, "text/plain", strings.NewReader(query))
 	if err != nil {

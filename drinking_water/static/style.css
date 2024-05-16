@@ -12,6 +12,18 @@ html, body {
     box-shadow: 0 0 5px #000;
 }
 
+.red-icon {
+    filter: hue-rotate(162deg) brightness(0.7) saturate(200.5);
+    border-radius: 50%;
+    box-shadow: 0 0 5px #000;
+}
+
+.green-icon {
+    filter: hue-rotate(281deg) brightness(0.7) saturate(200.5);
+    border-radius: 50%;
+    box-shadow: 0 0 5px #000;
+}
+
 #mapid {
     width: 100vw;
     height: 100vh;
