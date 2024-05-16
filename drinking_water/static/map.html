@@ -11,6 +11,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://unpkg.com/@mapbox/polyline@1.1.1/src/polyline.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.1/js.cookie.min.js"></script>
+    <script src="static/utils.js"></script> <!-- New utility script -->
+    <script src="static/map.js"></script>
+    <script src="static/routing.js"></script> <!-- Load routing functions -->
 </head>
 <body>
 <div id="title"></div>
@@ -20,20 +23,7 @@
     <div id="instructions"></div>
 </div>
 <script>
-    // Utility functions
-    const getUrlParameter = (name) => {
-        const regex = new RegExp(`[\\?&]${name}=([^&#]*)`);
-        const results = regex.exec(location.search);
-        return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, ' '));
-    };
-
-    const setUrlParameter = (key, value) => {
-        const baseUrl = [location.protocol, '//', location.host, location.pathname].join('');
-        const urlQueryString = document.location.search;
-        const newParam = `${key}=${value}`;
-        const params = urlQueryString ? urlQueryString.replace(new RegExp(`([?&])${key}[^&]*`), `$1${newParam}`) : `?${newParam}`;
-        window.history.replaceState({}, '', baseUrl + params);
-    };
+    // Utility functions are now in utils.js
 
     const saveMapCenterToCookies = (mymap) => {
         const center = mymap.getCenter();
@@ -44,31 +34,6 @@
         Cookies.set('mapLon', lon, { expires: 2 });
         Cookies.set('mapZoom', zoom, { expires: 2 });
     };
-
-    // Get initial map coordinates and zoom level from URL parameters or cookies
-    const initialLat = parseFloat(getUrlParameter('lat')) || parseFloat(Cookies.get('mapLat')) || 45.943200;
-    const initialLon = parseFloat(getUrlParameter('lon')) || parseFloat(Cookies.get('mapLon')) || 24.966800;
-    const initialZoom = parseInt(getUrlParameter('zoom'), 10) || parseInt(Cookies.get('mapZoom'), 10) || 7;
-
-    const mymap = L.map('mapid').setView([initialLat, initialLon], initialZoom);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap'
-    }).addTo(mymap);
-
-    // Event listeners
-    mymap.on('moveend', () => {
-        const center = mymap.getCenter();
-        setUrlParameter('lat', center.lat.toFixed(6));
-        setUrlParameter('lon', center.lng.toFixed(6));
-        setUrlParameter('zoom', mymap.getZoom());
-        saveMapCenterToCookies(mymap);
-    });
-
-    mymap.on('zoomend', () => {
-        setUrlParameter('zoom', mymap.getZoom());
-        saveMapCenterToCookies(mymap);
-    });
 
     // Marker cluster group
     const markers = L.markerClusterGroup();
@@ -90,9 +55,6 @@
         className: safe ? 'green-icon' : 'red-icon'
     });
 
-    let routeLayer;
-    let highlightedSegment;
-
     // Function to get the user's current position
     const getUserPosition = (callback) => {
         if (navigator.geolocation) {
@@ -102,69 +64,6 @@
         }
     };
 
-    // Function to draw the route on the map
-    const drawRoute = (route, steps) => {
-        if (routeLayer) {
-            mymap.removeLayer(routeLayer);
-        }
-        const routeCoordinates = polyline.decode(route);
-        routeLayer = L.polyline(routeCoordinates, { color: 'blue' }).addTo(mymap);
-        mymap.fitBounds(routeLayer.getBounds());
-
-        const instructions = document.getElementById('instructions');
-        instructions.innerHTML = '<h4>Route Instructions</h4>';
-        steps.forEach((step, index) => {
-            const stepHtml = `<p id="step-${index}" class="step-instruction">${index + 1}. ${getStepInstruction(step)} (${step.distance.toFixed(1)} meters)</p>`;
-            instructions.innerHTML += stepHtml;
-        });
-
-        // Add event listeners after DOM elements have been created
-        steps.forEach((step, index) => {
-            document.getElementById(`step-${index}`).addEventListener('click', () => highlightSegment(step));
-        });
-
-        // Show and expand the instructions
-        document.getElementById('toggle-instructions').style.display = 'block';
-        document.getElementById('instructions').style.display = 'block';
-        document.getElementById('toggle-instructions').textContent = 'Hide Route Instructions';
-    };
-
-    // Function to generate step instructions
-    const getStepInstruction = (step) => {
-        const { type, modifier } = step.maneuver;
-        const action = modifier ? `Turn ${modifier}` : 'Continue';
-        const road = step.name || 'the road';
-        return type === 'depart' ? `Start on ${road}` : type === 'arrive' ? 'Arrive at your destination' : `${action} onto ${road}`;
-    };
-
-    // Function to highlight and zoom to a specific route segment
-    const highlightSegment = (step) => {
-        if (highlightedSegment) {
-            mymap.removeLayer(highlightedSegment);
-        }
-        const segmentCoordinates = polyline.decode(step.geometry);
-        highlightedSegment = L.polyline(segmentCoordinates, { color: 'red', weight: 5 }).addTo(mymap);
-        mymap.fitBounds(highlightedSegment.getBounds());
-    };
-
-    // Function to route to a node from the user's current position
-    const routeToNode = (lat, lon) => {
-        getUserPosition((position) => {
-            const userLat = position.coords.latitude.toFixed(6);
-            const userLon = position.coords.longitude.toFixed(6);
-            const routingUrl = `https://routing.openstreetmap.de/routed-foot/route/v1/driving/${userLon},${userLat};${lon},${lat}?overview=full&steps=true&geometries=polyline`;
-
-            $.getJSON(routingUrl, (data) => {
-                if (data.code === 'Ok') {
-                    const route = data.routes[0].geometry;
-                    const steps = data.routes[0].legs[0].steps;
-                    drawRoute(route, steps);
-                } else {
-                    console.error("Error fetching route:", data);
-                }
-            });
-        });
-    };
 
     // Toggle instructions visibility
     document.getElementById('toggle-instructions').addEventListener('click', () => {
@@ -175,80 +74,80 @@
     });
 
     // Fetch the data and add markers using the custom icon
-        $.getJSON('/data', (data) => {
-            const filteredData = data.filter((node) => {
-                return (node.tags.amenity === 'drinking_water') ||
-                    (node.tags.man_made === 'water_well' && (node.tags.drinking_water === 'yes') || (node.tags.drinking_water === 'no') ) ||
-                    (node.tags.natural === 'spring' && (node.tags.drinking_water === 'yes') || (node.tags.drinking_water === 'no') ) ||
-                    (node.tags.amenity === 'toilets' && (node.tags.drinking_water === 'yes' || node.tags.drinking_water === 'no') ) ||
-                    (node.tags.man_made === 'water_tap' && (node.tags.drinking_water === 'yes' || node.tags.drinking_water === 'no') ) ||
-                    (node.tags.amenity === 'shelter' && (node.tags.drinking_water === 'yes' || node.tags.drinking_water === 'no') ) ||
-                    (node.tags.tourism === 'wilderness_hut' && (node.tags.drinking_water === 'yes' || node.tags.drinking_water === 'no') ) ||
-                    (node.tags.tourism === 'camp_site' && (node.tags.drinking_water === 'yes' || node.tags.drinking_water === 'no') ) ||
-                    (node.tags.tourism === 'camp_pitch' && (node.tags.drinking_water === 'yes' || node.tags.drinking_water === 'no') ) ||
-                    (node.tags.highway === 'rest_area' && (node.tags.drinking_water === 'yes' || node.tags.drinking_water === 'no') ) ||
-                    (node.tags.amenity === 'fountain' && (node.tags.drinking_water === 'yes' || node.tags.drinking_water === 'no') ) ||
-                    (node.tags.waterway === 'stream' && (node.tags.drinking_water === 'yes' || node.tags.drinking_water === 'no') ) ||
-                    (node.tags.amenity === 'watering_place' && (node.tags.drinking_water === 'yes' || node.tags.drinking_water === 'no') );
-            });
+    $.getJSON('/data', (data) => {
+        const filteredData = data.filter((node) => {
+            return (node.tags.amenity === 'drinking_water') ||
+                (node.tags.man_made === 'water_well' && (node.tags.drinking_water === 'yes') || (node.tags.drinking_water === 'no') ) ||
+                (node.tags.natural === 'spring' && (node.tags.drinking_water === 'yes') || (node.tags.drinking_water === 'no') ) ||
+                (node.tags.amenity === 'toilets' && (node.tags.drinking_water === 'yes' || node.tags.drinking_water === 'no') ) ||
+                (node.tags.man_made === 'water_tap' && (node.tags.drinking_water === 'yes' || node.tags.drinking_water === 'no') ) ||
+                (node.tags.amenity === 'shelter' && (node.tags.drinking_water === 'yes' || node.tags.drinking_water === 'no') ) ||
+                (node.tags.tourism === 'wilderness_hut' && (node.tags.drinking_water === 'yes' || node.tags.drinking_water === 'no') ) ||
+                (node.tags.tourism === 'camp_site' && (node.tags.drinking_water === 'yes' || node.tags.drinking_water === 'no') ) ||
+                (node.tags.tourism === 'camp_pitch' && (node.tags.drinking_water === 'yes' || node.tags.drinking_water === 'no') ) ||
+                (node.tags.highway === 'rest_area' && (node.tags.drinking_water === 'yes' || node.tags.drinking_water === 'no') ) ||
+                (node.tags.amenity === 'fountain' && (node.tags.drinking_water === 'yes' || node.tags.drinking_water === 'no') ) ||
+                (node.tags.waterway === 'stream' && (node.tags.drinking_water === 'yes' || node.tags.drinking_water === 'no') ) ||
+                (node.tags.amenity === 'watering_place' && (node.tags.drinking_water === 'yes' || node.tags.drinking_water === 'no') );
+        });
 
-            filteredData.forEach((node) => {
-                let icon;
-                let denumire;
-                if (node.tags.amenity === 'drinking_water') {
-                    icon = waterIcon;
-                    denumire = "Drinking Water";
-                } else if (node.tags.man_made === 'water_well') {
-                    const safe = node.tags.drinking_water === 'yes';
-                    icon = waterWellIcon(safe);
-                    denumire = "Water Well";
-                } else if (node.tags.natural === 'spring') {
-                    const safe = node.tags.drinking_water === 'yes';
-                    icon = waterWellIcon(safe);
-                    denumire = "Spring";
-                } else if (node.tags.amenity === 'toilets') {
-                    const safe = node.tags.drinking_water === 'yes';
-                    icon = waterWellIcon(safe);
-                    denumire = "Toilet";
-                } else if (node.tags.man_made === 'water_tap') {
-                    const safe = node.tags.drinking_water === 'yes';
-                    icon = waterWellIcon(safe);
-                    denumire = "Water Tap";
-                } else if (node.tags.amenity === 'shelter') {
-                    const safe = node.tags.drinking_water === 'yes';
-                    icon = waterWellIcon(safe);
-                    denumire = "Shelter";
-                } else if (node.tags.tourism === 'wilderness_hut') {
-                    const safe = node.tags.drinking_water === 'yes';
-                    icon = waterWellIcon(safe);
-                    denumire = "Wilderness Hut";
-                } else if (node.tags.tourism === 'camp_site') {
-                    const safe = node.tags.drinking_water === 'yes';
-                    icon = waterWellIcon(safe);
-                    denumire = "Camp Site";
-                } else if (node.tags.tourism === 'camp_pitch') {
-                    const safe = node.tags.drinking_water === 'yes';
-                    icon = waterWellIcon(safe);
-                    denumire = "Camp Pitch";
-                } else if (node.tags.highway === 'rest_area') {
-                    const safe = node.tags.drinking_water === 'yes';
-                    icon = waterWellIcon(safe);
-                    denumire = "Rest Area";
-                } else if (node.tags.amenity === 'fountain') {
-                    const safe = node.tags.drinking_water === 'yes';
-                    icon = waterWellIcon(safe);
-                    denumire = "Fountain";
-                } else if (node.tags.waterway === 'stream') {
-                    const safe = node.tags.drinking_water === 'yes';
-                    icon = waterWellIcon(safe);
-                    denumire = "Stream";
-                } else if (node.tags.amenity === 'watering_place') {
-                    const safe = node.tags.drinking_water === 'yes';
-                    icon = waterWellIcon(safe);
-                    denumire = "Watering Place";
-                } else {
-                    return;
-                }
+        filteredData.forEach((node) => {
+            let icon;
+            let denumire;
+            if (node.tags.amenity === 'drinking_water') {
+                icon = waterIcon;
+                denumire = "Drinking Water";
+            } else if (node.tags.man_made === 'water_well') {
+                const safe = node.tags.drinking_water === 'yes';
+                icon = waterWellIcon(safe);
+                denumire = "Water Well";
+            } else if (node.tags.natural === 'spring') {
+                const safe = node.tags.drinking_water === 'yes';
+                icon = waterWellIcon(safe);
+                denumire = "Spring";
+            } else if (node.tags.amenity === 'toilets') {
+                const safe = node.tags.drinking_water === 'yes';
+                icon = waterWellIcon(safe);
+                denumire = "Toilet";
+            } else if (node.tags.man_made === 'water_tap') {
+                const safe = node.tags.drinking_water === 'yes';
+                icon = waterWellIcon(safe);
+                denumire = "Water Tap";
+            } else if (node.tags.amenity === 'shelter') {
+                const safe = node.tags.drinking_water === 'yes';
+                icon = waterWellIcon(safe);
+                denumire = "Shelter";
+            } else if (node.tags.tourism === 'wilderness_hut') {
+                const safe = node.tags.drinking_water === 'yes';
+                icon = waterWellIcon(safe);
+                denumire = "Wilderness Hut";
+            } else if (node.tags.tourism === 'camp_site') {
+                const safe = node.tags.drinking_water === 'yes';
+                icon = waterWellIcon(safe);
+                denumire = "Camp Site";
+            } else if (node.tags.tourism === 'camp_pitch') {
+                const safe = node.tags.drinking_water === 'yes';
+                icon = waterWellIcon(safe);
+                denumire = "Camp Pitch";
+            } else if (node.tags.highway === 'rest_area') {
+                const safe = node.tags.drinking_water === 'yes';
+                icon = waterWellIcon(safe);
+                denumire = "Rest Area";
+            } else if (node.tags.amenity === 'fountain') {
+                const safe = node.tags.drinking_water === 'yes';
+                icon = waterWellIcon(safe);
+                denumire = "Fountain";
+            } else if (node.tags.waterway === 'stream') {
+                const safe = node.tags.drinking_water === 'yes';
+                icon = waterWellIcon(safe);
+                denumire = "Stream";
+            } else if (node.tags.amenity === 'watering_place') {
+                const safe = node.tags.drinking_water === 'yes';
+                icon = waterWellIcon(safe);
+                denumire = "Watering Place";
+            } else {
+                return;
+            }
 
             const popupContent = `
             <div class="popup-content">
@@ -266,10 +165,6 @@
         updateTitleAndCount(filteredData.length);
     });
 
-    // Function to update the title and count of the elements
-    const updateTitleAndCount = (count) => {
-        document.getElementById('title').textContent = `Drinking Water Locations in Romania: ${count} locations found`;
-    };
 </script>
 </body>
 </html>
