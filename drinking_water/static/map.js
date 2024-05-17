@@ -32,4 +32,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Add the search functionality
     addSearchControl();
+
+    // Add the button for adding a new drinking source
+    addNewDrinkingSourceButton();
 });

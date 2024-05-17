@@ -22,9 +22,6 @@ type OSMNode struct {
 	Tags map[string]string `json:"tags"`
 }
 
-// Global variable to store the nodes
-var waterNodes OSMData
-
 // fetchWaterNodes fetches nodes with drinking water from the Overpass API
 func fetchWaterNodes() {
 	url := "https://overpass-api.de/api/interpreter"

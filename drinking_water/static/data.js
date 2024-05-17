@@ -101,7 +101,7 @@ const createMarker = async (node) => {
     const { type, icon } = getNodeTypeAndIcon(node) || {};
     if (!type || !icon) return null;
     const popupContent = createPopupContent(node, type);
-    console.log(`Creating marker for node ID: ${node.id}`);
+    // console.log(`Creating marker for node ID: ${node.id}`);
     return L.marker([node.lat, node.lon], { icon }).bindPopup(popupContent);
 };
 
