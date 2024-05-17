@@ -1,14 +1,13 @@
 package main
 
 import (
+	"drinking_water/oauth" // Replace with the actual import path
 	"encoding/json"
 	"fmt"
-	"log"
-	"net/http"
-
-	"drinking_water/oauth" // Replace with the actual import path
 	"github.com/gorilla/sessions"
 	"golang.org/x/oauth2"
+	"log"
+	"net/http"
 )
 
 var (
@@ -95,7 +94,7 @@ func handleAddNode(w http.ResponseWriter, r *http.Request) {
 	session, _ := store.Get(r, "session-name")
 	token, ok := session.Values["oauth-token"].(*oauth2.Token)
 	if !ok {
-		http.Error(w, "No OAuth token found", http.StatusUnauthorized)
+		http.Error(w, "You are not authenticated. Please log in to add a new source.", http.StatusUnauthorized)
 		log.Println("No OAuth token found in session")
 		return
 	}

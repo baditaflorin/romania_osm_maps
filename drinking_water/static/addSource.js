@@ -3,19 +3,27 @@ const addNewDrinkingSourceButton = () => {
         onAdd: function(map) {
             const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
             const button = L.DomUtil.create('button', 'add-source-button', container);
-            button.innerHTML = 'Add Source';
+            button.innerHTML = 'Add Source'; // Updated button text
             button.title = 'Add new drinking source';
 
-            L.DomEvent.on(button, 'click', function() {
+            L.DomEvent.on(button, 'click', function(e) {
+                L.DomEvent.stopPropagation(e);  // Stop the click event from propagating to the map
+                map.getContainer().style.cursor = 'crosshair'; // Change cursor to crosshair
+                toastr.info('Click on the map to place a new drinking source');
+
                 map.on('click', onMapClick);
-                alert('Click on the map to place a new drinking source');
+
+                // Change back to the default cursor after the user has clicked on the map
+                map.once('click', function() {
+                    map.getContainer().style.cursor = ''; // Revert to default cursor
+                });
             });
 
             return container;
         }
     });
 
-    mymap.addControl(new addSourceControl({ position: 'topright' }));
+    mymap.addControl(new addSourceControl({ position: 'bottomright' }));
 };
 
 const onMapClick = (e) => {
@@ -54,6 +62,24 @@ const onMapClick = (e) => {
     });
 };
 
+toastr.options = {
+    "closeButton": false,
+    "debug": false,
+    "newestOnTop": false,
+    "progressBar": true,
+    "positionClass": "toast-top-right",
+    "preventDuplicates": false,
+    "onclick": null,
+    "showDuration": "300",
+    "hideDuration": "1000",
+    "timeOut": "5000",
+    "extendedTimeOut": "1000",
+    "showEasing": "swing",
+    "hideEasing": "linear",
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut"
+};
+
 const addNodeToOSM = async (lat, lon, type, safe) => {
     try {
         const response = await fetch('/addnode', {
@@ -65,16 +91,27 @@ const addNodeToOSM = async (lat, lon, type, safe) => {
         });
 
         if (!response.ok) {
-            throw new Error(`Failed to add node: ${response.statusText}`);
+            const errorText = await response.text();
+            throw new Error(errorText);
         }
 
         const result = await response.text();
-        alert(result);
+        toastr.success(result);
     } catch (error) {
         console.error('Error adding node:', error);
-        alert('Error adding node');
+        toastr.error(error.message);
+
+        if (error.message.includes("You are not authenticated")) {
+            toastr.info("You are not authenticated. Redirecting to login page...");
+
+            // Show a progress bar for 2 seconds before redirecting
+            setTimeout(() => {
+                window.location.href = "/login";
+            }, 2000);
+        }
     }
 };
+
 
 // Initialize the add source button
 addNewDrinkingSourceButton();
