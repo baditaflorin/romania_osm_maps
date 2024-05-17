@@ -4,13 +4,13 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="Make Oauth go code into own package">
+    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="Handle case when user is not logged in">
       <change afterPath="$PROJECT_DIR$/drinking_water/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/drinking_water/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/drinking_water/oauth/oauth.go" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/oauth/oauth.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/drinking_water/static/addSource.js" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/static/addSource.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drinking_water/static/map.html" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/static/map.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drinking_water/static/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/static/style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,7 +115,8 @@
     <MESSAGE value="Final Oauth Flow" />
     <MESSAGE value="Add initial Oauth Flow for drinking_water" />
     <MESSAGE value="Make Oauth go code into own package" />
-    <option name="LAST_COMMIT_MESSAGE" value="Make Oauth go code into own package" />
+    <MESSAGE value="Handle case when user is not logged in" />
+    <option name="LAST_COMMIT_MESSAGE" value="Handle case when user is not logged in" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

@@ -81,9 +81,9 @@ func handleAddNode(w http.ResponseWriter, r *http.Request) {
 
 	// Parse the incoming request to get node details
 	var node struct {
-		Lat     float64 `json:"lat"`
-		Lon     float64 `json:"lon"`
-		Amenity string  `json:"amenity"`
+		Lat  float64           `json:"lat"`
+		Lon  float64           `json:"lon"`
+		Tags map[string]string `json:"tags"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&node); err != nil {
 		http.Error(w, "Failed to parse request body: "+err.Error(), http.StatusBadRequest)
@@ -101,7 +101,7 @@ func handleAddNode(w http.ResponseWriter, r *http.Request) {
 	log.Printf("Retrieved OAuth token from session: %v", token)
 
 	// Create the map node using the OAuth token
-	oauth.CreateMapNode(token, node.Lat, node.Lon, node.Amenity)
+	oauth.CreateMapNode(token, node.Lat, node.Lon, node.Tags)
 
 	fmt.Fprintf(w, "Node created successfully")
 }

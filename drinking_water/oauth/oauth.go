@@ -114,7 +114,8 @@ func CloseChangeset(token *oauth2.Token, changesetID int) error {
 	return nil
 }
 
-func CreateMapNode(token *oauth2.Token, lat, lon float64, amenity string) {
+func CreateMapNode(token *oauth2.Token, lat, lon float64, tags map[string]string) {
+	// Create a changeset
 	changesetID, err := CreateChangeset(token)
 	if err != nil {
 		log.Fatalf("Failed to create changeset: %v", err)
@@ -123,12 +124,18 @@ func CreateMapNode(token *oauth2.Token, lat, lon float64, amenity string) {
 	client := Oauth2Config.Client(oauth2.NoContext, token)
 	endpointURL := "https://api.openstreetmap.org/api/0.6/node/create"
 
+	// Build the XML data with dynamic tags
+	var tagsXML string
+	for key, value := range tags {
+		tagsXML += fmt.Sprintf(`<tag k="%s" v="%s"/>`, key, value)
+	}
+
 	xmlData := fmt.Sprintf(`
 		<osm>
 			<node changeset="%d" lat="%f" lon="%f">
-				<tag k="amenity" v="%s"/>
+				%s
 			</node>
-		</osm>`, changesetID, lat, lon, amenity)
+		</osm>`, changesetID, lat, lon, tagsXML)
 
 	req, err := http.NewRequest("PUT", endpointURL, bytes.NewBufferString(xmlData))
 	if err != nil {
@@ -154,6 +161,7 @@ func CreateMapNode(token *oauth2.Token, lat, lon float64, amenity string) {
 
 	fmt.Printf("Node created: %s\n", string(body))
 
+	// Close the changeset
 	if err := CloseChangeset(token, changesetID); err != nil {
 		log.Fatalf("Failed to close changeset: %v", err)
 	}
