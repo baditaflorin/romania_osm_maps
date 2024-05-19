@@ -63,6 +63,8 @@ const generateInitialFormHTML = () => {
             <input type="checkbox" id="safe-water" name="safe">
             <label for="dog">Dog Bowl:</label>
             <input type="checkbox" id="dog" name="dog">
+            <label for="bottle">Bottled Water:</label>
+            <input type="checkbox" id="bottle" name="bottle">
             <button type="button" id="toggle-additional-fields">Add More Details</button>
             <div class="additional-fields" id="additional-fields">
                 ${generateAdditionalFieldsHTML()}
@@ -71,6 +73,7 @@ const generateInitialFormHTML = () => {
         </form>
     `;
 };
+
 
 const generateAdditionalFieldsHTML = () => {
     return `
@@ -116,6 +119,7 @@ const handleFormSubmit = (event, lat, lon) => {
         [type[0]]: type[1],
         'drinking_water': formData.get('safe') ? 'yes' : 'no',
         'dog': formData.get('dog') ? 'yes' : 'no',
+        'bottle': formData.get('bottle') ? 'yes' : 'no',
     };
 
     const optionalTags = ['fountain', 'description', 'indoor', 'name', 'access', 'seasonal'];
