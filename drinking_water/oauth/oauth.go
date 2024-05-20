@@ -17,7 +17,7 @@ import (
 var (
 	ClientID     string
 	ClientSecret string
-	RedirectURI  = "http://127.0.0.1:8080/callback"
+	RedirectURI  = "https://fountainmap.com/callback"
 	Oauth2Config *oauth2.Config
 	Store        = sessions.NewCookieStore([]byte("super-secret-key"))
 )
