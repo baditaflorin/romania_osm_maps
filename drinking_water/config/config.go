@@ -1,3 +1,4 @@
+// config/config.go
 package config
 
 import (
@@ -8,12 +9,14 @@ import (
 )
 
 type Config struct {
-	ClientID     string
-	ClientSecret string
-	RedirectURI  string
-	AuthURL      string
-	TokenURL     string
-	Query        string
+	ClientID         string
+	ClientSecret     string
+	RedirectURI      string
+	AuthURL          string
+	TokenURL         string
+	Query            string
+	ChangesetComment string
+	CreatedBy        string
 }
 
 func LoadConfig() *Config {
@@ -23,11 +26,13 @@ func LoadConfig() *Config {
 	}
 
 	return &Config{
-		ClientID:     os.Getenv("CLIENT_ID"),
-		ClientSecret: os.Getenv("CLIENT_SECRET"),
-		RedirectURI:  os.Getenv("REDIRECT_URI"),
-		AuthURL:      os.Getenv("AUTH_URL"),
-		TokenURL:     os.Getenv("TOKEN_URL"),
-		Query:        os.Getenv("QUERY"),
+		ClientID:         os.Getenv("CLIENT_ID"),
+		ClientSecret:     os.Getenv("CLIENT_SECRET"),
+		RedirectURI:      os.Getenv("REDIRECT_URI"),
+		AuthURL:          os.Getenv("AUTH_URL"),
+		TokenURL:         os.Getenv("TOKEN_URL"),
+		Query:            os.Getenv("QUERY"),
+		ChangesetComment: os.Getenv("CHANGESET_COMMENT"),
+		CreatedBy:        os.Getenv("CREATED_BY"),
 	}
 }

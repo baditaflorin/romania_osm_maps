@@ -1,5 +1,33 @@
 //map.js
 
+// Function to add a geolocate button to the map
+const addGeolocateButton = () => {
+    const geolocateControl = L.Control.extend({
+        onAdd: function(map) {
+            const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+            const button = L.DomUtil.create('button', '', container);
+            button.innerHTML = '<i class="fas fa-location-arrow"></i>';
+            button.title = 'Show My Location';
+
+            L.DomEvent.on(button, 'click', function(e) {
+                L.DomEvent.stopPropagation(e);
+                getUserPosition((position) => {
+                    const userLat = position.coords.latitude;
+                    const userLon = position.coords.longitude;
+                    map.setView(new L.LatLng(userLat, userLon), 15);
+                    L.marker([userLat, userLon]).addTo(map)
+                        .bindPopup('You are here!')
+                        .openPopup();
+                });
+            });
+
+            return container;
+        }
+    });
+
+    mymap.addControl(new geolocateControl({ position: 'topright' }));
+};
+
 document.addEventListener("DOMContentLoaded", function() {
     const initialLat = parseFloat(getUrlParameter('lat')) || parseFloat(Cookies.get('mapLat')) || 45.943200;
     const initialLon = parseFloat(getUrlParameter('lon')) || parseFloat(Cookies.get('mapLon')) || 24.966800;
@@ -33,6 +61,10 @@ document.addEventListener("DOMContentLoaded", function() {
     // Add the search functionality
     addSearchControl();
 
+    // Add the geolocate button
+    addGeolocateButton();
+
     // Add the button for adding a new drinking source
     addNewDrinkingSourceButton();
 });
+

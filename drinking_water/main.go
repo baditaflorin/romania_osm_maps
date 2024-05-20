@@ -11,25 +11,24 @@ import (
 )
 
 func main() {
-	// Load configuration
 	cfg := config.LoadConfig()
 
-	// Initialize OAuth with configuration
+	// Initialize OAuth and Cookie Store
 	oauth.Init(cfg)
 
-	// Fetch water nodes on server start
-	osm.FetchWaterNodes(cfg.Query)
+	// Fetch nodes on server start
+	osm.FetchNodes(cfg)
 
 	// Static file server
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	// Setting up HTTP server routes
-	http.HandleFunc("/", handlers.HandleMap)
-	http.HandleFunc("/data", handlers.HandleData)
-	http.HandleFunc("/login", handlers.HandleLogin)
-	http.HandleFunc("/callback", handlers.HandleCallback)
-	http.HandleFunc("/addnode", handlers.HandleAddNode)
+	// Setting up HTTP server routes with injected config
+	http.HandleFunc("/", handlers.HandleMap(cfg))
+	http.HandleFunc("/data", handlers.HandleData(cfg))
+	http.HandleFunc("/login", handlers.HandleLogin(cfg))
+	http.HandleFunc("/callback", handlers.HandleCallback(cfg))
+	http.HandleFunc("/addnode", handlers.HandleAddNode(cfg))
 
 	fmt.Println("Server starting on :8080...")
 	err := http.ListenAndServe(":8080", nil)
