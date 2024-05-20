@@ -2,51 +2,38 @@ package oauth
 
 import (
 	"bytes"
+	"drinking_water/config"
+	"drinking_water/constants"
 	"encoding/gob"
 	"fmt"
+	"github.com/gorilla/sessions"
+	"golang.org/x/oauth2"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
-
-	"github.com/gorilla/sessions"
-	"github.com/joho/godotenv"
-	"golang.org/x/oauth2"
 )
 
 var (
-	ClientID     string
-	ClientSecret string
-	RedirectURI  = "https://fountainmap.com/callback"
 	Oauth2Config *oauth2.Config
 	Store        = sessions.NewCookieStore([]byte("super-secret-key"))
 )
 
-func Init() {
+func Init(cfg *config.Config) {
 	// Register oauth2.Token with gob
 	gob.Register(&oauth2.Token{})
 
-	// Load environment variables from .env file
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
-	}
-
-	ClientID = os.Getenv("CLIENT_ID")
-	ClientSecret = os.Getenv("CLIENT_SECRET")
-
 	Oauth2Config = &oauth2.Config{
-		ClientID:     ClientID,
-		ClientSecret: ClientSecret,
-		RedirectURL:  RedirectURI,
+		ClientID:     cfg.ClientID,
+		ClientSecret: cfg.ClientSecret,
+		RedirectURL:  cfg.RedirectURI,
 		Scopes: []string{
 			"read_prefs",
 			"write_prefs",
 			"write_api",
 		},
 		Endpoint: oauth2.Endpoint{
-			AuthURL:  "https://www.openstreetmap.org/oauth2/authorize",
-			TokenURL: "https://www.openstreetmap.org/oauth2/token",
+			AuthURL:  cfg.AuthURL,
+			TokenURL: cfg.TokenURL,
 		},
 	}
 }
@@ -55,13 +42,13 @@ func CreateChangeset(token *oauth2.Token) (int, error) {
 	client := Oauth2Config.Client(oauth2.NoContext, token)
 	endpointURL := "https://api.openstreetmap.org/api/0.6/changeset/create"
 
-	xmlData := `
+	xmlData := fmt.Sprintf(`
 		<osm>
 			<changeset>
-				<tag k="created_by" v="go-example"/>
-				<tag k="comment" v="Adding a drinking water node"/>
+				<tag k="created_by" v="%s"/>
+				<tag k="comment" v="%s"/>
 			</changeset>
-		</osm>`
+		</osm>`, constants.CreatedBy, constants.ChangesetComment)
 
 	req, err := http.NewRequest("PUT", endpointURL, bytes.NewBufferString(xmlData))
 	if err != nil {
