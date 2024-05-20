@@ -4,17 +4,8 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="making code more modular">
-      <change afterPath="$PROJECT_DIR$/drinking_water/utils/http.go" afterDir="false" />
+    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="making code more modular, add geolocation button">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drinking_water/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/config/config.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drinking_water/handlers/handlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/handlers/handlers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drinking_water/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drinking_water/oauth/oauth.go" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/oauth/oauth.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drinking_water/osm/osm.go" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/osm/osm.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drinking_water/static/instructions.js" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/static/instructions.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drinking_water/static/map.js" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/static/map.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drinking_water/static/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/static/style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -123,7 +114,8 @@
     <MESSAGE value="Handle case when user is not logged in" />
     <MESSAGE value="Allow user to set any key value pairs" />
     <MESSAGE value="making code more modular" />
-    <option name="LAST_COMMIT_MESSAGE" value="making code more modular" />
+    <MESSAGE value="making code more modular, add geolocation button" />
+    <option name="LAST_COMMIT_MESSAGE" value="making code more modular, add geolocation button" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
