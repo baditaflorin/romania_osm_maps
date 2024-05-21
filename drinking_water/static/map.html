@@ -17,26 +17,53 @@
     <script src="static/utils.js"></script>
     <script src="static/map.js"></script>
     <script src="static/routing.js"></script>
-    <script src="static/data.js"></script> <!-- Load data handling script -->
-    <script src="static/instructions.js"></script> <!-- Load instructions handling script -->
-    <script src="static/search.js"></script> <!-- Load search script -->
-    <script src="static/addSource.js"></script> <!-- Load add source script -->
+    <script src="static/data.js"></script>
+    <script src="static/instructions.js"></script>
+    <script src="static/search.js"></script>
+    <script src="static/addSource.js"></script>
 </head>
 <body>
+
+<!-- Title Section -->
 <div id="title"></div>
+
+<!-- Map Section -->
 <div id="mapid"></div>
+
+<!-- Login Section -->
 <div id="login">
     <a href="/login">Log in with OpenStreetMap</a>
 </div>
+
+<!-- Instructions Section -->
 <div id="instructions-container">
     <button id="toggle-instructions" style="display: none;">Show Route Instructions</button>
     <div id="instructions"></div>
 </div>
+
+<div id="project-info-container">
+    <button id="toggle-project-info">Show Project Info</button>
+    <div id="project-info" style="display: none;">
+        <h2>Drinking Water Locations in Romania</h2>
+        <p>This project aims to map all the drinking water locations across Romania to help hikers and travelers find potable water sources.</p>
+        <h3>How to Add a New Source</h3>
+        <p>To add a new drinking water source, follow these steps:</p>
+        <ol>
+            <li>Click on the "Add Source" button located at the bottom right of the map.</li>
+            <li>Click on the map where the new source is located.</li>
+            <li>Fill out the form with the necessary details about the water source.</li>
+            <li>Click "Add Source" to submit the information.</li>
+        </ol>
+        <p>You need to have an OpenStreetMap account to add new sources. OpenStreetMap (OSM) is a collaborative project to create a free, editable map of the world. Having an OSM account allows you to contribute to the global mapping community and helps ensure the data's accuracy and reliability.</p>
+        <h3>Edit Existing Water Points</h3>
+        <p>You can also edit existing water points by clicking on any node and editing it in the OpenStreetMap iD Editor. This allows you to update information about the water source, ensuring the map remains accurate and up-to-date.</p>
+        <p>You can find me at baditaflorin@gmail.com</p>
+    </div>
+</div>
+
 <script>
     // Utility functions are now in utils.js
-
-
-
 </script>
+
 </body>
 </html>

@@ -186,3 +186,44 @@ html, body {
 .leaflet-control-custom button:hover {
     background-color: #f4f4f4;
 }
+
+/* Add these styles to style.css */
+
+#project-info-container {
+    position: absolute;
+    width: 30%;
+    bottom: 10px;
+    left: 10px;
+    z-index: 1000;
+}
+
+#toggle-project-info {
+    background: #007aff;
+    border: none;
+    color: white;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+#project-info {
+    background: rgba(255, 255, 255, 0.9);
+    margin: 0;
+    padding: 10px;
+    border-radius: 5px;
+    max-height: 400px;
+    overflow-y: auto;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: none;
+}
+
+#project-info h2, #project-info h3 {
+    margin: 0 0 10px;
+}
+
+#project-info p, #project-info ol {
+    margin: 10px 0;
+    padding: 0;
+}
