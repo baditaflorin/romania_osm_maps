@@ -41,6 +41,7 @@
     <div id="instructions"></div>
 </div>
 
+<!-- Project Info Section -->
 <div id="project-info-container">
     <button id="toggle-project-info">Show Project Info</button>
     <div id="project-info" style="display: none;">
@@ -58,6 +59,17 @@
         <h3>Edit Existing Water Points</h3>
         <p>You can also edit existing water points by clicking on any node and editing it in the OpenStreetMap iD Editor. This allows you to update information about the water source, ensuring the map remains accurate and up-to-date.</p>
         <p>You can find me at baditaflorin@gmail.com</p>
+    </div>
+</div>
+
+<!-- Modal for Adding/Editing Source -->
+<div id="source-modal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="close-modal">&times;</span>
+        <h2>Adding or Editing a Water Source</h2>
+        <p>To add a new water source, click on the map where the source is located, then fill out the form with the necessary details. Ensure you have an OpenStreetMap account to contribute.</p>
+        <p>If you are editing an existing source, click on the node and you will be redirected to the OpenStreetMap iD Editor where you can update the details.</p>
+        <button id="confirm-add-source">Proceed</button>
     </div>
 </div>
 

@@ -1,3 +1,5 @@
+// addSource.js
+
 const generateInitialFormHTML = () => {
     return `
         <style>
@@ -74,7 +76,6 @@ const generateInitialFormHTML = () => {
     `;
 };
 
-
 const generateAdditionalFieldsHTML = () => {
     return `
         <label for="fountain-type">Fountain Type:</label>
@@ -126,7 +127,7 @@ const handleFormSubmit = (event, lat, lon) => {
     optionalTags.forEach(tag => {
         const value = formData.get(tag);
         if (value) {
-            tags[tag] = value === 'yes' || value === 'no' ? value : formData.get(tag);
+            tags[tag] = value === 'yes' || 'no' ? value : formData.get(tag);
         }
     });
 
@@ -162,15 +163,32 @@ const addNewDrinkingSourceButton = () => {
 
             L.DomEvent.on(button, 'click', function(e) {
                 L.DomEvent.stopPropagation(e);  // Stop the click event from propagating to the map
-                map.getContainer().style.cursor = 'crosshair'; // Change cursor to crosshair
-                toastr.info('Click on the map to place a new source');
+                const hasSeenAddModal = Cookies.get('hasSeenAddModal');
+                if (!hasSeenAddModal) {
+                    showModal(() => {
+                        map.getContainer().style.cursor = 'crosshair'; // Change cursor to crosshair
+                        toastr.info('Click on the map to place a new source');
 
-                map.on('click', onMapClick);
+                        map.on('click', onMapClick);
 
-                // Change back to the default cursor after the user has clicked on the map
-                map.once('click', function() {
-                    map.getContainer().style.cursor = ''; // Revert to default cursor
-                });
+                        // Change back to the default cursor after the user has clicked on the map
+                        map.once('click', function() {
+                            map.getContainer().style.cursor = ''; // Revert to default cursor
+                        });
+
+                        Cookies.set('hasSeenAddModal', 'true', { expires: 365 });
+                    });
+                } else {
+                    map.getContainer().style.cursor = 'crosshair'; // Change cursor to crosshair
+                    toastr.info('Click on the map to place a new source');
+
+                    map.on('click', onMapClick);
+
+                    // Change back to the default cursor after the user has clicked on the map
+                    map.once('click', function() {
+                        map.getContainer().style.cursor = ''; // Revert to default cursor
+                    });
+                }
             });
 
             return container;
@@ -180,22 +198,45 @@ const addNewDrinkingSourceButton = () => {
     mymap.addControl(new addSourceControl({ position: 'bottomright' }));
 };
 
-toastr.options = {
-    "closeButton": false,
-    "debug": false,
-    "newestOnTop": false,
-    "progressBar": true,
-    "positionClass": "toast-top-right",
-    "preventDuplicates": false,
-    "onclick": null,
-    "showDuration": "300",
-    "hideDuration": "1000",
-    "timeOut": "5000",
-    "extendedTimeOut": "1000",
-    "showEasing": "swing",
-    "hideEasing": "linear",
-    "showMethod": "fadeIn",
-    "hideMethod": "fadeOut"
+const showModal = (onConfirm, isEdit = false, editUrl = '') => {
+    const modal = document.getElementById('source-modal');
+    modal.style.display = 'block';
+
+    const confirmButton = document.getElementById('confirm-add-source');
+    confirmButton.onclick = () => {
+        onConfirm();
+        hideModal();
+    };
+
+    const closeButton = document.getElementById('close-modal');
+    closeButton.onclick = hideModal;
+
+    window.onclick = (event) => {
+        if (event.target === modal) {
+            hideModal();
+        }
+    };
+
+    if (isEdit) {
+        confirmButton.textContent = 'Proceed to Edit';
+        confirmButton.onclick = () => {
+            window.open(editUrl, '_blank');
+            hideModal();
+            Cookies.set('hasSeenEditModal', 'true', { expires: 365 });
+        };
+    } else {
+        confirmButton.textContent = 'Proceed';
+        confirmButton.onclick = () => {
+            onConfirm();
+            hideModal();
+            Cookies.set('hasSeenAddModal', 'true', { expires: 365 });
+        };
+    }
+};
+
+const hideModal = () => {
+    const modal = document.getElementById('source-modal');
+    modal.style.display = 'none';
 };
 
 const addNodeToOSM = async (lat, lon, tags) => {
@@ -229,6 +270,9 @@ const addNodeToOSM = async (lat, lon, tags) => {
         }
     }
 };
+
+// Event listener for closing the modal
+document.getElementById('close-modal').addEventListener('click', hideModal);
 
 // Initialize the add source button
 addNewDrinkingSourceButton();

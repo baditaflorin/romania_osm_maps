@@ -1,4 +1,4 @@
-//data.js
+// data.js
 
 const markers = L.markerClusterGroup();
 
@@ -91,17 +91,27 @@ const createPopupContent = (node, denumire) => {
             <b>${denumire}</b><br>
             ${formatTags(node.tags)}
             <div class="mapillary-thumbnail">${mapillaryLink}</div>
-            <a href="https://www.openstreetmap.org/edit?editor=id&node=${node.id}" target="_blank" class="edit-link">Edit this node</a>
+            <a href="#" class="edit-link" onclick="editNode('${node.id}'); return false;">Edit this node</a>
             <br>
             <button onclick="routeToNode(${node.lat.toFixed(6)},${node.lon.toFixed(6)})" class="route-button">Route to here</button>
         </div>`;
+};
+
+const editNode = (nodeId) => {
+    const hasSeenEditModal = Cookies.get('hasSeenEditModal');
+    const editUrl = `https://www.openstreetmap.org/edit?editor=id&node=${nodeId}`;
+
+    if (!hasSeenEditModal) {
+        showModal(() => {}, true, editUrl);
+    } else {
+        window.open(editUrl, '_blank');
+    }
 };
 
 const createMarker = async (node) => {
     const { type, icon } = getNodeTypeAndIcon(node) || {};
     if (!type || !icon) return null;
     const popupContent = createPopupContent(node, type);
-    // console.log(`Creating marker for node ID: ${node.id}`);
     return L.marker([node.lat, node.lon], { icon }).bindPopup(popupContent);
 };
 

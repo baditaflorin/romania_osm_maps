@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="mod sample.env to new structure">
+    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="Fix #7">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drinking_water/static/instructions.js" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/static/instructions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/drinking_water/static/addSource.js" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/static/addSource.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/drinking_water/static/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/static/data.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/drinking_water/static/map.html" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/static/map.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/drinking_water/static/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/static/style.css" afterDir="false" />
     </list>
@@ -119,7 +120,8 @@
     <MESSAGE value="making code more modular" />
     <MESSAGE value="making code more modular, add geolocation button" />
     <MESSAGE value="mod sample.env to new structure" />
-    <option name="LAST_COMMIT_MESSAGE" value="mod sample.env to new structure" />
+    <MESSAGE value="Fix #7" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix #7" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
