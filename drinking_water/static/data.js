@@ -14,6 +14,11 @@ const waterIcon = createIcon('/static/water_icon.png', 'blue-icon');
 
 const waterWellIcon = (safe) => createIcon(
     safe ? '/static/water_icon.png' : '/static/water_icon.png',
+    safe ? 'blue-icon' : 'red-icon'
+);
+
+const otherWaterIcon = (safe) => createIcon(
+    safe ? '/static/water_icon.png' : '/static/water_icon.png',
     safe ? 'green-icon' : 'red-icon'
 );
 
@@ -24,16 +29,16 @@ const getNodeTypeAndIcon = (node) => {
         'drinking_water': waterIcon,
         'water_well': waterWellIcon(isNodeSafeWaterSource(node)),
         'spring': waterWellIcon(isNodeSafeWaterSource(node)),
-        'toilets': waterWellIcon(isNodeSafeWaterSource(node)),
+        'toilets': otherWaterIcon(isNodeSafeWaterSource(node)),
         'water_tap': waterWellIcon(isNodeSafeWaterSource(node)),
-        'shelter': waterWellIcon(isNodeSafeWaterSource(node)),
-        'wilderness_hut': waterWellIcon(isNodeSafeWaterSource(node)),
-        'camp_site': waterWellIcon(isNodeSafeWaterSource(node)),
-        'camp_pitch': waterWellIcon(isNodeSafeWaterSource(node)),
-        'rest_area': waterWellIcon(isNodeSafeWaterSource(node)),
-        'fountain': waterWellIcon(isNodeSafeWaterSource(node)),
-        'stream': waterWellIcon(isNodeSafeWaterSource(node)),
-        'watering_place': waterWellIcon(isNodeSafeWaterSource(node)),
+        'shelter': otherWaterIcon(isNodeSafeWaterSource(node)),
+        'wilderness_hut': otherWaterIcon(isNodeSafeWaterSource(node)),
+        'camp_site': otherWaterIcon(isNodeSafeWaterSource(node)),
+        'camp_pitch': otherWaterIcon(isNodeSafeWaterSource(node)),
+        'rest_area': otherWaterIcon(isNodeSafeWaterSource(node)),
+        'fountain': otherWaterIcon(isNodeSafeWaterSource(node)),
+        'stream': otherWaterIcon(isNodeSafeWaterSource(node)),
+        'watering_place': otherWaterIcon(isNodeSafeWaterSource(node)),
     };
 
     for (const key in typeToIcon) {
