@@ -1,34 +1,26 @@
-//map.js
+// map.js
 
 // Function to add a geolocate button to the map
 const addGeolocateButton = () => {
-    const geolocateControl = L.Control.extend({
-        onAdd: function(map) {
-            const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-            const button = L.DomUtil.create('button', '', container);
-            button.innerHTML = '<i class="fas fa-location-arrow"></i>';
-            button.title = 'Show My Location';
+    const container = document.getElementById('geolocate-container');
+    const button = document.createElement('button');
+    button.innerHTML = '<i class="fas fa-location-arrow"></i>';
+    button.title = 'Show My Location';
+    button.className = 'leaflet-control-custom';
+    button.onclick = (e) => {
+        e.stopPropagation();
+        getUserPosition((position) => {
+            const userLat = position.coords.latitude;
+            const userLon = position.coords.longitude;
+            mymap.setView(new L.LatLng(userLat, userLon), 15);
+            L.marker([userLat, userLon]).addTo(mymap)
+                .bindPopup('You are here!')
+                .openPopup();
+        });
+    };
 
-            L.DomEvent.on(button, 'click', function(e) {
-                L.DomEvent.stopPropagation(e);
-                getUserPosition((position) => {
-                    const userLat = position.coords.latitude;
-                    const userLon = position.coords.longitude;
-                    map.setView(new L.LatLng(userLat, userLon), 15);
-                    L.marker([userLat, userLon]).addTo(map)
-                        .bindPopup('You are here!')
-                        .openPopup();
-                });
-            });
-
-            return container;
-        }
-    });
-
-    mymap.addControl(new geolocateControl({ position: 'topright' }));
+    container.appendChild(button);
 };
-
-
 
 document.addEventListener("DOMContentLoaded", async function() {
     const initialLat = parseFloat(getUrlParameter('lat')) || parseFloat(Cookies.get('mapLat')) || 45.943200;

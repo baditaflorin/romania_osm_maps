@@ -228,10 +228,6 @@ html, body {
     padding: 0;
 }
 
-
-
-
-
 /* Add these styles to style.css */
 
 .modal {
@@ -318,6 +314,7 @@ html, body {
 
 #filter-container {
     max-width: 250px;
+    position: relative;
 }
 
 #toggle-filters {
@@ -328,6 +325,8 @@ html, body {
     cursor: pointer;
     border-radius: 5px;
     font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 #filters-content {
@@ -336,6 +335,10 @@ html, body {
     padding: 10px;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 40px;
+    right: 0;
+    width: 250%;
 }
 
 #filters-content h3 {
@@ -367,4 +370,28 @@ html, body {
 
 #apply-filters:hover, #clear-filters:hover {
     background: #005bb5;
+}
+
+#geolocate-container {
+    position: absolute;
+    top: 100px; /* Adjusted so it doesn't overlap with other buttons */
+    right: 10px;
+    z-index: 1100; /* Higher than other controls */
+}
+
+.leaflet-control-custom button {
+    background-color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.leaflet-control-custom button:hover {
+    background-color: #f4f4f4;
+}
+
+.leaflet-control-custom i {
+    font-size: 16px;
 }

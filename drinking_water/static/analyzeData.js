@@ -1,6 +1,6 @@
 // Filename: ./static/analyzeData.js
 
-const getTopKeyValues = (data, topN = 10) => {
+const getTopKeyValues = (data, topN = 30) => {
     const keyValueCounts = {};
 
     data.forEach(item => {
