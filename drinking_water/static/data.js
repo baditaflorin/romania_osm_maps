@@ -81,10 +81,13 @@ const loadMapillaryImage = async (element, mapillaryId) => {
     }
 };
 
-const createPopupContent = (node, denumire) => {
+const createPopupContent = async (node, denumire) => {
     let mapillaryLink = '';
     if (node.tags.mapillary) {
-        mapillaryLink = `<a href="#" onclick="loadMapillaryImage(this, '${node.tags.mapillary}'); return false;">Load Mapillary Photo</a><br>`;
+        const thumbnailUrl = await fetchMapillaryThumbnail(node.tags.mapillary);
+        if (thumbnailUrl) {
+            mapillaryLink = `<a href="https://www.mapillary.com/app/?pKey=${node.tags.mapillary}" target="_blank"><img src="${thumbnailUrl}" alt="Mapillary Photo" style="max-width: 100%; height: auto;"></a><br>`;
+        }
     }
     return `
         <div class="popup-content">
@@ -111,7 +114,7 @@ const editNode = (nodeId) => {
 const createMarker = async (node) => {
     const { type, icon } = getNodeTypeAndIcon(node) || {};
     if (!type || !icon) return null;
-    const popupContent = createPopupContent(node, type);
+    const popupContent = await createPopupContent(node, type);
     return L.marker([node.lat, node.lon], { icon }).bindPopup(popupContent);
 };
 
