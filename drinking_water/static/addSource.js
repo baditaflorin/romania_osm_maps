@@ -1,5 +1,7 @@
 // addSource.js
 
+let isAddingSource = false; // Flag to check if a source is being added
+
 const generateInitialFormHTML = () => {
     return `
         <style>
@@ -142,12 +144,15 @@ const addMarkerToMap = (lat, lon) => {
         handleFormSubmit(event, lat, lon);
         mymap.off('click', onMapClick);
         marker.remove();
+        isAddingSource = false; // Reset the flag after adding the source
     });
 
     document.getElementById('toggle-additional-fields').addEventListener('click', toggleAdditionalFieldsVisibility);
 };
 
 const onMapClick = (e) => {
+    if (isAddingSource) return; // Prevent adding another marker if already in progress
+    isAddingSource = true; // Set the flag to indicate adding source is in progress
     const lat = e.latlng.lat;
     const lon = e.latlng.lng;
     addMarkerToMap(lat, lon);
@@ -163,6 +168,8 @@ const addNewDrinkingSourceButton = () => {
 
             L.DomEvent.on(button, 'click', function(e) {
                 L.DomEvent.stopPropagation(e);  // Stop the click event from propagating to the map
+                if (isAddingSource) return; // Prevent multiple clicks
+
                 const hasSeenAddModal = Cookies.get('hasSeenAddModal');
                 if (!hasSeenAddModal) {
                     showModal(() => {
