@@ -1,4 +1,4 @@
-// data.js
+// Filename: ./static/data.js
 
 const markers = L.markerClusterGroup();
 
@@ -149,15 +149,17 @@ const filterAndMapNodes = async (data) => {
 };
 
 // Function to fetch data and add markers to the map
-const fetchDataAndAddMarkers = async () => {
+const fetchDataAndAddMarkers = async (criteria = {}) => {
     try {
         const response = await fetch('/data');
         const data = await response.json();
 
         console.log('Fetched data:', data);
 
+        const filteredData = filterData(data, criteria); // Apply the filter
+
         markers.clearLayers(); // Clear existing markers to avoid duplicates
-        const markersToAdd = await filterAndMapNodes(data);
+        const markersToAdd = await filterAndMapNodes(filteredData);
         console.log('Markers to add:', markersToAdd);
         markersToAdd.forEach((marker) => markers.addLayer(marker));
         mymap.addLayer(markers);
@@ -169,3 +171,15 @@ const fetchDataAndAddMarkers = async () => {
         console.error('Error fetching data and adding markers:', error);
     }
 };
+
+// Load the filter.js script
+const loadFilterScript = () => {
+    const script = document.createElement('script');
+    script.src = 'static/filter.js';
+    script.onload = () => {
+        console.log('Filter script loaded successfully.');
+    };
+    document.head.appendChild(script);
+};
+
+loadFilterScript();

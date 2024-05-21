@@ -272,3 +272,99 @@ html, body {
     text-decoration: none;
     cursor: pointer;
 }
+
+/* Add these styles to style.css */
+/* Add these styles to style.css */
+
+#search-filter-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+#search-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+}
+
+.search-input {
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+.search-button {
+    background: #007aff;
+    border: none;
+    color: white;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.search-button:hover {
+    background: #005bb5;
+}
+
+#filter-container {
+    max-width: 250px;
+}
+
+#toggle-filters {
+    background: #007aff;
+    border: none;
+    color: white;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+#filters-content {
+    display: none;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#filters-content h3 {
+    margin-top: 0;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+#filters {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+#filters div {
+    margin-bottom: 5px;
+}
+
+#apply-filters, #clear-filters {
+    background: #007aff;
+    border: none;
+    color: white;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+#apply-filters:hover, #clear-filters:hover {
+    background: #005bb5;
+}

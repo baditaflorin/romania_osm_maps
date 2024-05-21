@@ -4,8 +4,14 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="Fix #9">
+    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="Make Query more broad to include possible drinking_water sources">
+      <change afterPath="$PROJECT_DIR$/drinking_water/static/analyzeData.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/drinking_water/static/filter.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/drinking_water/static/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/static/data.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/drinking_water/static/map.html" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/static/map.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/drinking_water/static/map.js" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/static/map.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/drinking_water/static/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/static/style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -120,7 +126,8 @@
     <MESSAGE value="Fix #8" />
     <MESSAGE value="Check to not allow more than 1 node added when adding nodes" />
     <MESSAGE value="Fix #9" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix #9" />
+    <MESSAGE value="Make Query more broad to include possible drinking_water sources" />
+    <option name="LAST_COMMIT_MESSAGE" value="Make Query more broad to include possible drinking_water sources" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

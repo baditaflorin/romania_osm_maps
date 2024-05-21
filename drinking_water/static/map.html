@@ -21,6 +21,8 @@
     <script src="static/instructions.js"></script>
     <script src="static/search.js"></script>
     <script src="static/addSource.js"></script>
+    <script src="static/filter.js"></script>
+    <script src="static/analyzeData.js"></script>
 </head>
 <body>
 
@@ -34,6 +36,25 @@
 <div id="login">
     <a href="/login">Log in with OpenStreetMap</a>
 </div>
+
+<!-- Filter Section -->
+<div id="search-filter-container">
+    <div id="search-container">
+        <input type="text" id="search-input" class="search-input" placeholder="Search location...">
+        <button id="search-button" class="search-button">Search</button>
+    </div>
+    <div id="filter-container">
+        <button id="toggle-filters">Show Filters</button>
+        <div id="filters-content">
+            <h3>Filter by:</h3>
+            <div id="filters"></div>
+            <button id="apply-filters">Apply Filters</button>
+            <button id="clear-filters">Clear Filters</button>
+        </div>
+    </div>
+</div>
+
+
 
 <!-- Instructions Section -->
 <div id="instructions-container">
@@ -61,6 +82,7 @@
         <p>You can find me at baditaflorin@gmail.com</p>
     </div>
 </div>
+
 
 <!-- Modal for Adding/Editing Source -->
 <div id="source-modal" class="modal">

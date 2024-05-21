@@ -28,7 +28,9 @@ const addGeolocateButton = () => {
     mymap.addControl(new geolocateControl({ position: 'topright' }));
 };
 
-document.addEventListener("DOMContentLoaded", function() {
+
+
+document.addEventListener("DOMContentLoaded", async function() {
     const initialLat = parseFloat(getUrlParameter('lat')) || parseFloat(Cookies.get('mapLat')) || 45.943200;
     const initialLon = parseFloat(getUrlParameter('lon')) || parseFloat(Cookies.get('mapLon')) || 24.966800;
     const initialZoom = parseInt(getUrlParameter('z'), 10) || parseInt(Cookies.get('mapZoom'), 10) || 7;
@@ -56,10 +58,65 @@ document.addEventListener("DOMContentLoaded", function() {
     window.routeLayer = null;
     window.highlightedSegment = null;
 
+    // Fetch data
+    const response = await fetch('/data');
+    const data = await response.json();
+
+    // Get top key-value pairs
+    const topKeyValues = getTopKeyValues(data);
+    console.log('Top key-value pairs:', topKeyValues);
+
+    // Display filters
+    const filtersContainer = document.getElementById('filters');
+    topKeyValues.forEach(([keyValue, count]) => {
+        const [key, value] = keyValue.split(':');
+        const filterId = `filter-${key}-${value}`;
+        const filterElement = document.createElement('div');
+        filterElement.innerHTML = `
+            <input type="checkbox" id="${filterId}" data-key="${key}" data-value="${value}">
+            <label for="${filterId}">${key}: ${value} (${count})</label>
+        `;
+        filtersContainer.appendChild(filterElement);
+    });
+
+    document.getElementById('apply-filters').addEventListener('click', () => {
+        const selectedFilters = Array.from(document.querySelectorAll('#filters input:checked')).map(input => ({
+            key: input.getAttribute('data-key'),
+            value: input.getAttribute('data-value')
+        }));
+
+        const filterCriteria = selectedFilters.reduce((criteria, filter) => {
+            if (!criteria[filter.key]) {
+                criteria[filter.key] = [];
+            }
+            criteria[filter.key].push(filter.value);
+            return criteria;
+        }, {});
+
+        fetchDataAndAddMarkers(filterCriteria);
+    });
+
+    document.getElementById('clear-filters').addEventListener('click', () => {
+        document.querySelectorAll('#filters input:checked').forEach(input => input.checked = false);
+        fetchDataAndAddMarkers(); // Fetch all data without any filters
+    });
+
+    // Toggle filter container visibility
+    document.getElementById('toggle-filters').addEventListener('click', () => {
+        const filtersContent = document.getElementById('filters-content');
+        const isHidden = filtersContent.style.display === 'none';
+        filtersContent.style.display = isHidden ? 'block' : 'none';
+        document.getElementById('toggle-filters').textContent = isHidden ? 'Hide Filters' : 'Show Filters';
+    });
+
+    // Initial load of markers without filters
     fetchDataAndAddMarkers();
 
-    // Add the search functionality
-    addSearchControl();
+    // Search functionality
+    document.getElementById('search-button').addEventListener('click', () => {
+        const query = document.getElementById('search-input').value;
+        searchLocation(query, mymap);
+    });
 
     // Add the geolocate button
     addGeolocateButton();
@@ -67,4 +124,3 @@ document.addEventListener("DOMContentLoaded", function() {
     // Add the button for adding a new drinking source
     addNewDrinkingSourceButton();
 });
-
