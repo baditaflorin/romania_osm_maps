@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"osm-zoning/config"
 	"strings"
+	"sync"
 )
 
 type Data struct {
@@ -28,9 +29,14 @@ type Geometry struct {
 
 var Ways Data
 
+var (
+	pendingChanges = make(map[int64]map[string]string)
+	mu             sync.Mutex
+)
+
 func FetchWays(cfg *config.Config, bbox string) {
 	url := "https://overpass-api.de/api/interpreter"
-	query := fmt.Sprintf(`[out:json];way["highway"](%s);out ids geom;`, bbox)
+	query := fmt.Sprintf(`[out:json];way["highway"](%s);out geom;`, bbox)
 
 	log.Printf("Fetching data with query: %s", query) // Log the query
 
@@ -44,7 +50,7 @@ func FetchWays(cfg *config.Config, bbox string) {
 		log.Fatalf("Error reading response from Overpass API: %s", err)
 	}
 
-	log.Printf("Overpass API response: %s", body) // Log the response
+	//log.Printf("Overpass API response: %s", body) // Log the response
 
 	var tempWays Data
 	err = json.Unmarshal(body, &tempWays)
@@ -55,4 +61,26 @@ func FetchWays(cfg *config.Config, bbox string) {
 	log.Printf("Fetched %d ways", len(tempWays.Elements)) // Log the number of fetched ways
 
 	Ways.Elements = tempWays.Elements
+}
+
+func AddPendingChange(wayID int64, tags map[string]string) {
+	mu.Lock()
+	defer mu.Unlock()
+	pendingChanges[wayID] = tags
+}
+
+func GetPendingChanges() map[int64]map[string]string {
+	mu.Lock()
+	defer mu.Unlock()
+	changes := make(map[int64]map[string]string)
+	for k, v := range pendingChanges {
+		changes[k] = v
+	}
+	return changes
+}
+
+func ClearPendingChanges() {
+	mu.Lock()
+	defer mu.Unlock()
+	pendingChanges = make(map[int64]map[string]string)
 }

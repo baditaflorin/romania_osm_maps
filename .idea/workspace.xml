@@ -4,22 +4,14 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="Change color schema, increase filter to 200">
-      <change afterPath="$PROJECT_DIR$/osm-zoning/config/config.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-zoning/constants/constants.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-zoning/handlers/handlers.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-zoning/main.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-zoning/oauth/oauth.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-zoning/osm.service" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-zoning/osm/osm.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-zoning/static/data.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-zoning/static/map.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-zoning/static/map.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-zoning/static/road_icon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-zoning/static/style.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-zoning/static/utils.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-zoning/utils/http.go" afterDir="false" />
+    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="osm-zoning displays road geometry">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/osm-zoning/handlers/handlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/osm-zoning/handlers/handlers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/osm-zoning/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/osm-zoning/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/osm-zoning/oauth/oauth.go" beforeDir="false" afterPath="$PROJECT_DIR$/osm-zoning/oauth/oauth.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/osm-zoning/osm/osm.go" beforeDir="false" afterPath="$PROJECT_DIR$/osm-zoning/osm/osm.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/osm-zoning/static/map.html" beforeDir="false" afterPath="$PROJECT_DIR$/osm-zoning/static/map.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/osm-zoning/static/map.js" beforeDir="false" afterPath="$PROJECT_DIR$/osm-zoning/static/map.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -112,7 +104,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="implement clustering" />
     <MESSAGE value="add man_made=water_well , coloring for drinking water yes/no" />
     <MESSAGE value="add natural=spring" />
     <MESSAGE value="add other combos, split go in 2" />
@@ -137,7 +128,8 @@
     <MESSAGE value="Add dynamic filter to the map fix #12" />
     <MESSAGE value="Add back Geolocation button, show hide filter on same position" />
     <MESSAGE value="Change color schema, increase filter to 200" />
-    <option name="LAST_COMMIT_MESSAGE" value="Change color schema, increase filter to 200" />
+    <MESSAGE value="osm-zoning displays road geometry" />
+    <option name="LAST_COMMIT_MESSAGE" value="osm-zoning displays road geometry" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

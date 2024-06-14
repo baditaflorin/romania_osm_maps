@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"osm-zoning/config"
+	"osm-zoning/osm"
 	"osm-zoning/utils"
 
 	"github.com/gorilla/sessions"
@@ -36,18 +37,6 @@ func Init(cfg *config.Config) {
 	}
 }
 
-func createChangesetRequest(cfg *config.Config, token *oauth2.Token) (*http.Request, error) {
-	xmlData := fmt.Sprintf(`
-        <osm>
-            <changeset>
-                <tag k="created_by" v="%s"/>
-                <tag k="comment" v="%s"/>
-            </changeset>
-        </osm>`, cfg.CreatedBy, cfg.ChangesetComment)
-
-	return utils.CreateRequest("PUT", "https://api.openstreetmap.org/api/0.6/changeset/create", "text/xml", []byte(xmlData))
-}
-
 func createWayRequest(changesetID int, nodes []int64, tags map[string]string) (*http.Request, error) {
 	var tagsXML string
 	for key, value := range tags {
@@ -68,6 +57,75 @@ func createWayRequest(changesetID int, nodes []int64, tags map[string]string) (*
         </osm>`, changesetID, nodesXML, tagsXML)
 
 	return utils.CreateRequest("PUT", "https://api.openstreetmap.org/api/0.6/way/create", "text/xml", []byte(xmlData))
+}
+
+func updateWayRequest(changesetID int, wayID int64, tags map[string]string) (*http.Request, error) {
+	var tagsXML string
+	for key, value := range tags {
+		tagsXML += fmt.Sprintf(`<tag k="%s" v="%s"/>`, key, value)
+	}
+
+	xmlData := fmt.Sprintf(`
+        <osm>
+            <way id="%d" changeset="%d">
+                %s
+            </way>
+        </osm>`, wayID, changesetID, tagsXML)
+
+	return utils.CreateRequest("PUT", fmt.Sprintf("https://api.openstreetmap.org/api/0.6/way/%d", wayID), "text/xml", []byte(xmlData))
+}
+
+func UpdateWayTags(cfg *config.Config, token *oauth2.Token, wayID int64, tags map[string]string) {
+	changesetID, err := CreateChangeset(cfg, token)
+	if err != nil {
+		log.Fatalf("Failed to create changeset: %v", err)
+	}
+
+	client := Oauth2Config.Client(oauth2.NoContext, token)
+	req, err := updateWayRequest(changesetID, wayID, tags)
+	if err != nil {
+		log.Fatalf("Failed to create request: %v", err)
+	}
+	req.Header.Set("Authorization", "Bearer "+token.AccessToken)
+
+	_, err = utils.DoRequest(client, req)
+	if err != nil {
+		log.Fatalf("Failed to update way: %v", err)
+	}
+
+	fmt.Printf("Way updated successfully\n")
+
+	if err := CloseChangeset(token, changesetID); err != nil {
+		log.Fatalf("Failed to close changeset: %v", err)
+	}
+}
+
+func createWayUpdateRequest(changesetID int, wayID int64, tags map[string]string) (*http.Request, error) {
+	var tagsXML string
+	for key, value := range tags {
+		tagsXML += fmt.Sprintf(`<tag k="%s" v="%s"/>`, key, value)
+	}
+
+	xmlData := fmt.Sprintf(`
+        <osm>
+            <way id="%d" changeset="%d">
+                %s
+            </way>
+        </osm>`, wayID, changesetID, tagsXML)
+
+	return utils.CreateRequest("PUT", fmt.Sprintf("https://api.openstreetmap.org/api/0.6/way/%d", wayID), "text/xml", []byte(xmlData))
+}
+
+func createChangesetRequest(cfg *config.Config, token *oauth2.Token) (*http.Request, error) {
+	xmlData := fmt.Sprintf(`
+        <osm>
+            <changeset>
+                <tag k="created_by" v="%s"/>
+                <tag k="comment" v="%s"/>
+            </changeset>
+        </osm>`, cfg.CreatedBy, cfg.ChangesetComment)
+
+	return utils.CreateRequest("PUT", "https://api.openstreetmap.org/api/0.6/changeset/create", "text/xml", []byte(xmlData))
 }
 
 func CreateChangeset(cfg *config.Config, token *oauth2.Token) (int, error) {
@@ -126,4 +184,35 @@ func CreateMapWay(cfg *config.Config, token *oauth2.Token, nodes []int64, tags m
 	if err := CloseChangeset(token, changesetID); err != nil {
 		log.Fatalf("Failed to close changeset: %v", err)
 	}
+}
+
+func SaveChanges(cfg *config.Config, token *oauth2.Token) {
+	changesetID, err := CreateChangeset(cfg, token)
+	if err != nil {
+		log.Fatalf("Failed to create changeset: %v", err)
+	}
+
+	client := Oauth2Config.Client(oauth2.NoContext, token)
+	pendingChanges := osm.GetPendingChanges()
+
+	for wayID, tags := range pendingChanges {
+		req, err := createWayUpdateRequest(changesetID, wayID, tags)
+		if err != nil {
+			log.Fatalf("Failed to create request: %v", err)
+		}
+		req.Header.Set("Authorization", "Bearer "+token.AccessToken)
+
+		_, err = utils.DoRequest(client, req)
+		if err != nil {
+			log.Fatalf("Failed to update way: %v", err)
+		}
+
+		fmt.Printf("Way %d updated successfully\n", wayID)
+	}
+
+	if err := CloseChangeset(token, changesetID); err != nil {
+		log.Fatalf("Failed to close changeset: %v", err)
+	}
+
+	osm.ClearPendingChanges()
 }

@@ -22,6 +22,8 @@ func main() {
 	http.HandleFunc("/login", handlers.HandleLogin(cfg))
 	http.HandleFunc("/callback", handlers.HandleCallback(cfg))
 	http.HandleFunc("/addway", handlers.HandleAddWay(cfg))
+	http.HandleFunc("/updateway", handlers.HandleUpdateWay(cfg))     // New handler
+	http.HandleFunc("/savechanges", handlers.HandleSaveChanges(cfg)) // New handler
 
 	fmt.Println("Server starting on :7777...")
 	err := http.ListenAndServe(":7777", nil)

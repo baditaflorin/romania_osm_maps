@@ -31,7 +31,7 @@ func HandleData(cfg *config.Config) http.HandlerFunc {
 		}
 
 		// Log the data that will be sent
-		log.Printf("Serving data: %s", data)
+		//log.Printf("Serving data: %s", data)
 
 		w.Write(data)
 	}
@@ -100,5 +100,53 @@ func HandleAddWay(cfg *config.Config) http.HandlerFunc {
 		oauth.CreateMapWay(cfg, token, way.Nodes, way.Tags)
 
 		fmt.Fprintf(w, "Way created successfully")
+	}
+}
+
+func HandleUpdateWay(cfg *config.Config) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+			return
+		}
+
+		var way struct {
+			ID   int64             `json:"id"`
+			Tags map[string]string `json:"tags"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&way); err != nil {
+			http.Error(w, "Failed to parse request body: "+err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		session, _ := oauth.Store.Get(r, "session-name")
+		token, ok := session.Values["oauth-token"].(*oauth2.Token)
+		if !ok {
+			http.Error(w, "You are not authenticated. Please log in to update this road.", http.StatusUnauthorized)
+			log.Println("No OAuth token found in session")
+			return
+		}
+		log.Printf("Retrieved OAuth token from session: %v", token)
+
+		oauth.UpdateWayTags(cfg, token, way.ID, way.Tags)
+
+		fmt.Fprintf(w, "Way updated successfully")
+	}
+}
+
+func HandleSaveChanges(cfg *config.Config) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		session, _ := oauth.Store.Get(r, "session-name")
+		token, ok := session.Values["oauth-token"].(*oauth2.Token)
+		if !ok {
+			http.Error(w, "You are not authenticated. Please log in to save changes.", http.StatusUnauthorized)
+			log.Println("No OAuth token found in session")
+			return
+		}
+		log.Printf("Retrieved OAuth token from session: %v", token)
+
+		oauth.SaveChanges(cfg, token)
+
+		fmt.Fprintf(w, "Changes saved successfully")
 	}
 }
