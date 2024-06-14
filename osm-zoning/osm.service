@@ -1,0 +1,16 @@
+[Unit]
+Description=OSM Zoning Map
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=root
+RuntimeMaxSec=1d
+WorkingDirectory=/opt/osm-zoning
+ExecStart=/opt/osm-zoning/backend
+
+[Install]
+WantedBy=multi-user.target
