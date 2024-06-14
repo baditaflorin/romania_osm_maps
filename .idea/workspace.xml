@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="osm-zoning edit button exists not working to update yet">
+    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="osm-zoning sane logging of the error">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/osm-zoning/oauth/oauth.go" beforeDir="false" afterPath="$PROJECT_DIR$/osm-zoning/oauth/oauth.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/osm-zoning/utils/http.go" beforeDir="false" afterPath="$PROJECT_DIR$/osm-zoning/utils/http.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -100,7 +99,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add natural=spring" />
     <MESSAGE value="add other combos, split go in 2" />
     <MESSAGE value="extract js into separate files" />
     <MESSAGE value="making the code more modular, add functional prog style" />
@@ -125,7 +123,8 @@
     <MESSAGE value="Change color schema, increase filter to 200" />
     <MESSAGE value="osm-zoning displays road geometry" />
     <MESSAGE value="osm-zoning edit button exists not working to update yet" />
-    <option name="LAST_COMMIT_MESSAGE" value="osm-zoning edit button exists not working to update yet" />
+    <MESSAGE value="osm-zoning sane logging of the error" />
+    <option name="LAST_COMMIT_MESSAGE" value="osm-zoning sane logging of the error" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
