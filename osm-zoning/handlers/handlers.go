@@ -79,6 +79,14 @@ func HandleAddWay(cfg *config.Config) http.HandlerFunc {
 			return
 		}
 
+		session, _ := oauth.Store.Get(r, "session-name")
+		token, ok := session.Values["oauth-token"].(*oauth2.Token)
+		if !ok {
+			http.Error(w, "You are not authenticated. Please log in to add a new road.", http.StatusUnauthorized)
+			log.Println("No OAuth token found in session")
+			return
+		}
+
 		var way struct {
 			Nodes []int64           `json:"nodes"`
 			Tags  map[string]string `json:"tags"`
@@ -88,13 +96,6 @@ func HandleAddWay(cfg *config.Config) http.HandlerFunc {
 			return
 		}
 
-		session, _ := oauth.Store.Get(r, "session-name")
-		token, ok := session.Values["oauth-token"].(*oauth2.Token)
-		if !ok {
-			http.Error(w, "You are not authenticated. Please log in to add a new road.", http.StatusUnauthorized)
-			log.Println("No OAuth token found in session")
-			return
-		}
 		log.Printf("Retrieved OAuth token from session: %v", token)
 
 		oauth.CreateMapWay(cfg, token, way.Nodes, way.Tags)
@@ -110,6 +111,14 @@ func HandleUpdateWay(cfg *config.Config) http.HandlerFunc {
 			return
 		}
 
+		session, _ := oauth.Store.Get(r, "session-name")
+		token, ok := session.Values["oauth-token"].(*oauth2.Token)
+		if !ok {
+			log.Println("No OAuth token found in session")
+			http.Error(w, "You are not authenticated. Please log in to update this road.", http.StatusUnauthorized)
+			return
+		}
+
 		var way struct {
 			ID   int64             `json:"id"`
 			Tags map[string]string `json:"tags"`
@@ -119,13 +128,6 @@ func HandleUpdateWay(cfg *config.Config) http.HandlerFunc {
 			return
 		}
 
-		session, _ := oauth.Store.Get(r, "session-name")
-		token, ok := session.Values["oauth-token"].(*oauth2.Token)
-		if !ok {
-			http.Error(w, "You are not authenticated. Please log in to update this road.", http.StatusUnauthorized)
-			log.Println("No OAuth token found in session")
-			return
-		}
 		log.Printf("Retrieved OAuth token from session: %v", token)
 
 		oauth.UpdateWayTags(cfg, token, way.ID, way.Tags)

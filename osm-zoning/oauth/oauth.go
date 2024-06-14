@@ -16,8 +16,9 @@ import (
 )
 
 var (
-	Oauth2Config *oauth2.Config
-	Store        = sessions.NewCookieStore([]byte("super-secret-key"))
+	Oauth2Config       *oauth2.Config
+	Store              = sessions.NewCookieStore([]byte("super-secret-key"))
+	currentChangesetID int
 )
 
 func Init(cfg *config.Config) {
@@ -36,6 +37,13 @@ func Init(cfg *config.Config) {
 			AuthURL:  cfg.AuthURL,
 			TokenURL: cfg.TokenURL,
 		},
+	}
+
+	Store.Options = &sessions.Options{
+		Path:     "/",
+		MaxAge:   3600 * 24, // Session expires in one day
+		HttpOnly: true,      // Prevents JavaScript access to the cookie
+		Secure:   true,      // Ensures the cookie is sent over HTTPS only
 	}
 }
 
@@ -115,39 +123,6 @@ func getWayVersion(wayID int64, token *oauth2.Token) (int, error) {
 	return osmData.Way.Version, nil
 }
 
-func UpdateWayTags(cfg *config.Config, token *oauth2.Token, wayID int64, tags map[string]string) {
-	log.Printf("Updating way tags for way %d with tags %v", wayID, tags)
-
-	version, err := getWayVersion(wayID, token)
-	if err != nil {
-		log.Fatalf("Failed to get way version: %v", err)
-	}
-
-	changesetID, err := CreateChangeset(cfg, token)
-	if err != nil {
-		log.Fatalf("Failed to create changeset: %v", err)
-	}
-
-	client := Oauth2Config.Client(oauth2.NoContext, token)
-	req, err := updateWayRequest(changesetID, wayID, version, tags)
-	if err != nil {
-		log.Fatalf("Failed to create request: %v", err)
-	}
-	req.Header.Set("Authorization", "Bearer "+token.AccessToken)
-
-	log.Printf("Sending update request to URL %s with method %s", req.URL.String(), req.Method)
-	_, err = utils.DoRequest(client, req)
-	if err != nil {
-		log.Fatalf("Failed to update way: %v", err)
-	}
-
-	log.Printf("Way %d updated successfully", wayID)
-
-	if err := CloseChangeset(token, changesetID); err != nil {
-		log.Fatalf("Failed to close changeset: %v", err)
-	}
-}
-
 func createWayUpdateRequest(changesetID int, wayID int64, tags map[string]string) (*http.Request, error) {
 	var tagsXML string
 	for key, value := range tags {
@@ -180,6 +155,10 @@ func createChangesetRequest(cfg *config.Config, token *oauth2.Token) (*http.Requ
 }
 
 func CreateChangeset(cfg *config.Config, token *oauth2.Token) (int, error) {
+	if currentChangesetID != 0 {
+		return currentChangesetID, nil
+	}
+
 	client := Oauth2Config.Client(oauth2.NoContext, token)
 	req, err := createChangesetRequest(cfg, token)
 	if err != nil {
@@ -196,12 +175,17 @@ func CreateChangeset(cfg *config.Config, token *oauth2.Token) (int, error) {
 	fmt.Sscanf(string(body), "%d", &changesetID)
 
 	log.Printf("Created changeset with ID %d", changesetID)
+	currentChangesetID = changesetID
 	return changesetID, nil
 }
 
-func CloseChangeset(token *oauth2.Token, changesetID int) error {
+func CloseCurrentChangeset(token *oauth2.Token) error {
+	if currentChangesetID == 0 {
+		return nil
+	}
+
 	client := Oauth2Config.Client(oauth2.NoContext, token)
-	endpointURL := fmt.Sprintf("https://api.openstreetmap.org/api/0.6/changeset/%d/close", changesetID)
+	endpointURL := fmt.Sprintf("https://api.openstreetmap.org/api/0.6/changeset/%d/close", currentChangesetID)
 
 	req, err := utils.CreateRequest("PUT", endpointURL, "text/xml", nil)
 	if err != nil {
@@ -214,8 +198,38 @@ func CloseChangeset(token *oauth2.Token, changesetID int) error {
 		return fmt.Errorf("failed to execute request: %v", err)
 	}
 
-	log.Printf("Closed changeset with ID %d", changesetID)
+	log.Printf("Closed changeset with ID %d", currentChangesetID)
+	currentChangesetID = 0
 	return nil
+}
+
+func UpdateWayTags(cfg *config.Config, token *oauth2.Token, wayID int64, tags map[string]string) {
+	log.Printf("Updating way tags for way %d with tags %v", wayID, tags)
+
+	version, err := getWayVersion(wayID, token)
+	if err != nil {
+		log.Fatalf("Failed to get way version: %v", err)
+	}
+
+	changesetID, err := CreateChangeset(cfg, token)
+	if err != nil {
+		log.Fatalf("Failed to create changeset: %v", err)
+	}
+
+	client := Oauth2Config.Client(oauth2.NoContext, token)
+	req, err := updateWayRequest(changesetID, wayID, version, tags)
+	if err != nil {
+		log.Fatalf("Failed to create request: %v", err)
+	}
+	req.Header.Set("Authorization", "Bearer "+token.AccessToken)
+
+	log.Printf("Sending update request to URL %s with method %s", req.URL.String(), req.Method)
+	_, err = utils.DoRequest(client, req)
+	if err != nil {
+		log.Fatalf("Failed to update way: %v", err)
+	}
+
+	log.Printf("Way %d updated successfully", wayID)
 }
 
 func CreateMapWay(cfg *config.Config, token *oauth2.Token, nodes []int64, tags map[string]string) {
@@ -239,10 +253,6 @@ func CreateMapWay(cfg *config.Config, token *oauth2.Token, nodes []int64, tags m
 	}
 
 	log.Printf("Way created successfully")
-
-	if err := CloseChangeset(token, changesetID); err != nil {
-		log.Fatalf("Failed to close changeset: %v", err)
-	}
 }
 
 func SaveChanges(cfg *config.Config, token *oauth2.Token) {
@@ -272,7 +282,7 @@ func SaveChanges(cfg *config.Config, token *oauth2.Token) {
 		log.Printf("Way %d updated successfully", wayID)
 	}
 
-	if err := CloseChangeset(token, changesetID); err != nil {
+	if err := CloseCurrentChangeset(token); err != nil {
 		log.Fatalf("Failed to close changeset: %v", err)
 	}
 

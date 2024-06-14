@@ -4,8 +4,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="osm-zoning sane logging of the error">
+    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="osm-zoning WORKING VERSION - one changeset per each change still">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/osm-zoning/handlers/handlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/osm-zoning/handlers/handlers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/osm-zoning/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/osm-zoning/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/osm-zoning/oauth/oauth.go" beforeDir="false" afterPath="$PROJECT_DIR$/osm-zoning/oauth/oauth.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -99,7 +101,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add other combos, split go in 2" />
     <MESSAGE value="extract js into separate files" />
     <MESSAGE value="making the code more modular, add functional prog style" />
     <MESSAGE value="fix #2 Mapillary image display if exist" />
@@ -124,7 +125,8 @@
     <MESSAGE value="osm-zoning displays road geometry" />
     <MESSAGE value="osm-zoning edit button exists not working to update yet" />
     <MESSAGE value="osm-zoning sane logging of the error" />
-    <option name="LAST_COMMIT_MESSAGE" value="osm-zoning sane logging of the error" />
+    <MESSAGE value="osm-zoning WORKING VERSION - one changeset per each change still" />
+    <option name="LAST_COMMIT_MESSAGE" value="osm-zoning WORKING VERSION - one changeset per each change still" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

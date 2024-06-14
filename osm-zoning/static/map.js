@@ -127,13 +127,24 @@ const submitEditWayForm = async (wayId) => {
     });
 
     try {
-        await fetch(`/updateway`, {
+        const response = await fetch(`/updateway`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({ id: wayId, tags })
         });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                alert("You are not authenticated. Redirecting to login page.");
+                window.location.href = "/login";
+            } else {
+                const errorText = await response.text();
+                alert("Failed to update way: " + errorText);
+            }
+            return;
+        }
 
         alert("Way updated successfully");
     } catch (error) {
@@ -144,9 +155,20 @@ const submitEditWayForm = async (wayId) => {
 
 const saveChanges = async () => {
     try {
-        await fetch(`/savechanges`, {
+        const response = await fetch(`/savechanges`, {
             method: "POST"
         });
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                alert("You are not authenticated. Redirecting to login page.");
+                window.location.href = "/login";
+            } else {
+                const errorText = await response.text();
+                alert("Failed to save changes: " + errorText);
+            }
+            return;
+        }
 
         alert("Changes saved successfully");
     } catch (error) {
