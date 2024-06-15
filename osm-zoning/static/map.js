@@ -63,16 +63,29 @@ const fetchDataAndAddMarkers = async () => {
             .map(createWay);
 
         waysToAdd.forEach(way => way.addTo(mymap));
-
+        createLegend(data);
     } catch (error) {
         console.error('Error fetching data and adding markers:', error);
     }
 };
 
+const zoningCodeColors = {
+    residential: 'blue',
+    commercial: 'green',
+    industrial: 'red',
+    A: 'gold',
+    B: 'orange',
+    C: 'red',
+    D: 'red',
+    // Add more zoning codes and their colors here
+};
+
 const createWay = (way) => {
     const latlngs = way.geometry.map(point => [point.lat, point.lon]);
+    const zoningCode = way.tags['zoning_code'];
+    const color = zoningCodeColors[zoningCode] || 'gray'; // Default color
 
-    const wayPolyline = L.polyline(latlngs, { color: 'blue' });
+    const wayPolyline = L.polyline(latlngs, { color });
 
     const popupContent = `
         <div class="popup-content">
@@ -84,6 +97,24 @@ const createWay = (way) => {
     wayPolyline.bindPopup(popupContent);
 
     return wayPolyline;
+};
+
+const createLegend = (data) => {
+    const legendContainer = document.getElementById('legend');
+    legendContainer.innerHTML = ''; // Clear previous legend
+
+    const zoningCodes = [...new Set(data.map(way => way.tags['zoning_code']))];
+
+    zoningCodes.forEach(zoningCode => {
+        const color = zoningCodeColors[zoningCode] || 'blue';
+        const legendItem = document.createElement('div');
+        legendItem.classList.add('legend-item');
+        legendItem.innerHTML = `
+            <span class="legend-color" style="background-color: ${color};"></span>
+            <span>${zoningCode}</span>
+        `;
+        legendContainer.appendChild(legendItem);
+    });
 };
 
 const formatTags = (tags) => {

@@ -32,6 +32,3 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
 });
 
-const clearMarkers = () => {
-    markers.clearLayers();
-};
