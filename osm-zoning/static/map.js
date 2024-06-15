@@ -117,6 +117,12 @@ const createLegend = (data) => {
     });
 };
 
+const createFormField = (label, id, value) => `
+    <label for="${id}">${label}:</label>
+    <input type="text" id="${id}" name="${id}" value="${value}"><br>
+`;
+
+
 const formatTags = (tags) => {
     if (!tags) return 'No tags available';
 
@@ -126,10 +132,21 @@ const formatTags = (tags) => {
 };
 
 const editWay = (wayId, tags) => {
-    const formFields = Object.entries(tags).map(([key, value]) => `
-        <label for="${key}">${key}:</label>
-        <input type="text" id="${key}" name="${key}" value="${value}"><br>
-    `).join('');
+    const uniqueFields = {};
+    const commonFields = ['addr:neighborhood', 'zoning_code', 'old_name'];
+
+    commonFields.forEach(field => {
+        if (tags[field]) {
+            uniqueFields[field] = tags[field];
+            delete tags[field];
+        } else {
+            uniqueFields[field] = '';
+        }
+    });
+
+    const formFields = Object.entries(tags).map(([key, value]) => createFormField(key, key, value)).join('');
+
+    const commonFormFields = Object.entries(uniqueFields).map(([key, value]) => createFormField(key, key, value)).join('');
 
     const popup = L.popup()
         .setLatLng(mymap.getCenter())
@@ -137,10 +154,7 @@ const editWay = (wayId, tags) => {
             <div>
                 <h3>Edit Way ${wayId}</h3>
                 <form id="editWayForm" onsubmit="submitEditWayForm(${wayId}); return false;">
-                    <label for="addr:neighborhood">Neighborhood:</label>
-                    <input type="text" id="addr:neighborhood" name="addr:neighborhood" value="${tags['addr:neighborhood'] || ''}"><br>
-                    <label for="zoning_code">Zoning Code:</label>
-                    <input type="text" id="zoning_code" name="zoning_code" value="${tags['zoning_code'] || ''}"><br>
+                    ${commonFormFields}
                     ${formFields}
                     <button type="submit">Save</button>
                 </form>
@@ -148,6 +162,7 @@ const editWay = (wayId, tags) => {
         `)
         .openOn(mymap);
 };
+
 
 const submitEditWayForm = async (wayId) => {
     const form = document.getElementById("editWayForm");
@@ -183,6 +198,7 @@ const submitEditWayForm = async (wayId) => {
         alert("Failed to update way");
     }
 };
+
 
 const saveChanges = async () => {
     try {

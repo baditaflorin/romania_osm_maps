@@ -4,12 +4,8 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="osm-zoning WORKING VERSION - open changesets, sessions shared bugs still exist">
+    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="osm-zoning WORKING VERSION - open changesets, sessions shared bugs still exist, added colors">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/osm-zoning/static/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/osm-zoning/static/data.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/osm-zoning/static/map.html" beforeDir="false" afterPath="$PROJECT_DIR$/osm-zoning/static/map.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/osm-zoning/static/map.js" beforeDir="false" afterPath="$PROJECT_DIR$/osm-zoning/static/map.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/osm-zoning/static/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/osm-zoning/static/style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,7 +98,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="making the code more modular, add functional prog style" />
     <MESSAGE value="fix #2 Mapillary image display if exist" />
     <MESSAGE value="fix #3 search location nominatim" />
     <MESSAGE value="Implemement Oauth Flow" />
@@ -127,7 +122,8 @@
     <MESSAGE value="osm-zoning sane logging of the error" />
     <MESSAGE value="osm-zoning WORKING VERSION - one changeset per each change still" />
     <MESSAGE value="osm-zoning WORKING VERSION - open changesets, sessions shared bugs still exist" />
-    <option name="LAST_COMMIT_MESSAGE" value="osm-zoning WORKING VERSION - open changesets, sessions shared bugs still exist" />
+    <MESSAGE value="osm-zoning WORKING VERSION - open changesets, sessions shared bugs still exist, added colors" />
+    <option name="LAST_COMMIT_MESSAGE" value="osm-zoning WORKING VERSION - open changesets, sessions shared bugs still exist, added colors" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
