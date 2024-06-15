@@ -4,11 +4,17 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="osm-zoning WORKING VERSION - sessions shared bugs still exist, removed duplicated fields">
+    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="osm-zoning WORKING VERSION - added search, legend sessions shared bugs still exist,">
+      <change afterPath="$PROJECT_DIR$/osm-zoning/static/api.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/osm-zoning/static/events.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/osm-zoning/static/mapInitialization.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/osm-zoning/static/markers.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/osm-zoning/static/wayUtils.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/osm-zoning/static/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/osm-zoning/static/data.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/osm-zoning/static/map.html" beforeDir="false" afterPath="$PROJECT_DIR$/osm-zoning/static/map.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/osm-zoning/static/map.js" beforeDir="false" afterPath="$PROJECT_DIR$/osm-zoning/static/map.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/osm-zoning/static/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/osm-zoning/static/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/osm-zoning/static/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/osm-zoning/static/utils.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -101,7 +107,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fix #3 search location nominatim" />
     <MESSAGE value="Implemement Oauth Flow" />
     <MESSAGE value="Final Oauth Flow" />
     <MESSAGE value="Add initial Oauth Flow for drinking_water" />
@@ -126,7 +131,8 @@
     <MESSAGE value="osm-zoning WORKING VERSION - open changesets, sessions shared bugs still exist" />
     <MESSAGE value="osm-zoning WORKING VERSION - open changesets, sessions shared bugs still exist, added colors" />
     <MESSAGE value="osm-zoning WORKING VERSION - sessions shared bugs still exist, removed duplicated fields" />
-    <option name="LAST_COMMIT_MESSAGE" value="osm-zoning WORKING VERSION - sessions shared bugs still exist, removed duplicated fields" />
+    <MESSAGE value="osm-zoning WORKING VERSION - added search, legend sessions shared bugs still exist," />
+    <option name="LAST_COMMIT_MESSAGE" value="osm-zoning WORKING VERSION - added search, legend sessions shared bugs still exist," />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

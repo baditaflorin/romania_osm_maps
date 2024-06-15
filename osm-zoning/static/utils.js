@@ -1,7 +1,7 @@
 // utils.js
 
 // Utility function to get URL parameter
-function getUrlParameter(name) {
+export function getUrlParameter(name) {
     name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
     var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
     var results = regex.exec(location.search);
@@ -9,7 +9,7 @@ function getUrlParameter(name) {
 }
 
 // Function to set URL parameters
-function setUrlParameters(params) {
+export function setUrlParameters(params) {
     const baseUrl = `${location.protocol}//${location.host}${location.pathname}`;
     const urlParams = new URLSearchParams(location.search);
 
