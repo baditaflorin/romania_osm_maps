@@ -42,6 +42,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     document.getElementById("saveChangesButton").addEventListener("click", async function() {
         await saveChanges();
     });
+
+    document.getElementById("searchBar").addEventListener("input", searchStreets);
 });
 
 const clearMarkers = () => {
@@ -64,6 +66,9 @@ const fetchDataAndAddMarkers = async () => {
 
         waysToAdd.forEach(way => way.addTo(mymap));
         createLegend(data);
+
+        // Store data globally for search
+        window.wayData = data;
     } catch (error) {
         console.error('Error fetching data and adding markers:', error);
     }
@@ -85,7 +90,11 @@ const createWay = (way) => {
     const zoningCode = way.tags['zoning_code'];
     const color = zoningCodeColors[zoningCode] || 'gray'; // Default color
 
-    const wayPolyline = L.polyline(latlngs, { color });
+    const wayPolyline = L.polyline(latlngs, {
+        color,
+        weight: 15,  // Adjust the width here
+        opacity: 0.3 // Adjust the transparency here
+    });
 
     const popupContent = `
         <div class="popup-content">
@@ -95,6 +104,11 @@ const createWay = (way) => {
         </div>
     `;
     wayPolyline.bindPopup(popupContent);
+
+    wayPolyline.on('click', () => {
+        wayPolyline.openPopup();
+        mymap.setView(latlngs[0], 18); // Zoom to the way
+    });
 
     return wayPolyline;
 };
@@ -117,12 +131,6 @@ const createLegend = (data) => {
     });
 };
 
-const createFormField = (label, id, value) => `
-    <label for="${id}">${label}:</label>
-    <input type="text" id="${id}" name="${id}" value="${value}"><br>
-`;
-
-
 const formatTags = (tags) => {
     if (!tags) return 'No tags available';
 
@@ -130,6 +138,11 @@ const formatTags = (tags) => {
         .map(([key, value]) => `${key}: ${value}`)
         .join('<br>');
 };
+
+const createFormField = (label, id, value) => `
+    <label for="${id}">${label}:</label>
+    <input type="text" id="${id}" name="${id}" value="${value}"><br>
+`;
 
 const editWay = (wayId, tags) => {
     const uniqueFields = {};
@@ -162,7 +175,6 @@ const editWay = (wayId, tags) => {
         `)
         .openOn(mymap);
 };
-
 
 const submitEditWayForm = async (wayId) => {
     const form = document.getElementById("editWayForm");
@@ -199,7 +211,6 @@ const submitEditWayForm = async (wayId) => {
     }
 };
 
-
 const saveChanges = async () => {
     try {
         const response = await fetch(`/savechanges`, {
@@ -222,4 +233,43 @@ const saveChanges = async () => {
         console.error('Error saving changes:', error);
         alert("Failed to save changes");
     }
+};
+
+const normalizeString = (str) => {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+};
+
+const searchStreets = () => {
+    const query = normalizeString(document.getElementById("searchBar").value);
+    const resultsContainer = document.getElementById("searchResults");
+    resultsContainer.innerHTML = '';
+
+    if (!query) {
+        return;
+    }
+
+    const results = window.wayData.filter(way => {
+        const name = normalizeString(way.tags['name'] || '');
+        return name.includes(query);
+    });
+
+    results.forEach(result => {
+        const resultItem = document.createElement('div');
+        resultItem.textContent = result.tags['name'];
+        resultItem.onclick = () => {
+            const latlngs = result.geometry.map(point => [point.lat, point.lon]);
+            mymap.setView(latlngs[0], 18); // Zoom to the first point of the street
+            L.popup()
+                .setLatLng(latlngs[0])
+                .setContent(`
+                    <div class="popup-content">
+                        <b>Road Segment</b><br>
+                        ${formatTags(result.tags)}
+                        <a href="#" class="edit-link" onclick='editWay(${result.id}, ${JSON.stringify(result.tags)}); return false;'>Edit this segment</a>
+                    </div>
+                `)
+                .openOn(mymap);
+        };
+        resultsContainer.appendChild(resultItem);
+    });
 };
