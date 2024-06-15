@@ -33,7 +33,7 @@ export const createWay = (way) => {
 
     wayPolyline.on('click', () => {
         wayPolyline.openPopup();
-        window.mymap.setView(latlngs[0], 18); // Zoom to the way
+        mymap.setView(latlngs[0], 18); // Zoom to the way
     });
 
     return wayPolyline;
@@ -88,7 +88,7 @@ export const editWay = (wayId, tags) => {
     const commonFormFields = Object.entries(uniqueFields).map(([key, value]) => createFormField(key, key, value)).join('');
 
     const popup = L.popup()
-        .setLatLng(window.mymap.getCenter())
+        .setLatLng(mymap.getCenter())
         .setContent(`
             <div>
                 <h3>Edit Way ${wayId}</h3>
@@ -99,7 +99,7 @@ export const editWay = (wayId, tags) => {
                 </form>
             </div>
         `)
-        .openOn(window.mymap);
+        .openOn(mymap);
 };
 
 export const submitEditWayForm = async (wayId) => {
@@ -107,7 +107,9 @@ export const submitEditWayForm = async (wayId) => {
     const formData = new FormData(form);
     const tags = {};
     formData.forEach((value, key) => {
-        tags[key] = value;
+        if (value.trim() !== "") { // Only add tags with non-empty values
+            tags[key] = value;
+        }
     });
 
     try {
