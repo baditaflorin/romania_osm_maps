@@ -1,7 +1,5 @@
-// routing.js
-
-let routeLayer;  // Initialize the routeLayer variable
-// routing.js
+let routeLayer;
+let highlightedSegment;
 
 const createRouteLayer = (route) => {
     const routeCoordinates = polyline.decode(route);
