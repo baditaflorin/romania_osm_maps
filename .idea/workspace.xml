@@ -5,33 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="osm-zoning Removed empty keys where there is not value before saving to OpenStreetMap">
-      <change afterPath="$PROJECT_DIR$/drinking_water/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-toilet-map/config/config.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-toilet-map/constants/constants.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-toilet-map/go.mod" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-toilet-map/handlers/handlers.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-toilet-map/main.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-toilet-map/oauth/oauth.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-toilet-map/osm/osm.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-toilet-map/static/addSource.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-toilet-map/static/analyzeData.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-toilet-map/static/data.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-toilet-map/static/filter.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-toilet-map/static/instructions.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-toilet-map/static/map.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-toilet-map/static/map.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-toilet-map/static/routing.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-toilet-map/static/search.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-toilet-map/static/style.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-toilet-map/static/toilet_icon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-toilet-map/static/utils.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-toilet-map/utils/http.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-zoning/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/osm-zoning/oauth/error_handling.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/osm-toilet-map/static/modal.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drinking_water/static/addSource.js" beforeDir="false" afterPath="$PROJECT_DIR$/drinking_water/static/addSource.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/osm-zoning/oauth/oauth.go" beforeDir="false" afterPath="$PROJECT_DIR$/osm-zoning/oauth/oauth.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/osm-zoning/osm/osm.go" beforeDir="false" afterPath="$PROJECT_DIR$/osm-zoning/osm/osm.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/osm-toilet-map/static/addSource.js" beforeDir="false" afterPath="$PROJECT_DIR$/osm-toilet-map/static/addSource.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/osm-toilet-map/static/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/osm-toilet-map/static/data.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/osm-toilet-map/static/map.html" beforeDir="false" afterPath="$PROJECT_DIR$/osm-toilet-map/static/map.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/osm-toilet-map/static/map.js" beforeDir="false" afterPath="$PROJECT_DIR$/osm-toilet-map/static/map.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/osm-toilet-map/static/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/osm-toilet-map/static/utils.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,23 +50,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.automatic.dependencies.download": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "git-widget-placeholder": "main",
-    "go.import.settings.migrated": "true",
-    "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/Users/florin/Documents/GITHUB_PROJECTS/romania_osm_maps/osm-toilet-map/static",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.automatic.dependencies.download&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/florin/Documents/GITHUB_PROJECTS/romania_osm_maps/osm-toilet-map/static&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/osm-toilet-map/static" />

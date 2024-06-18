@@ -1,5 +1,7 @@
 // data.js
 
+import {updateTitleAndCount} from "./utils.js";
+
 const markers = L.markerClusterGroup();
 
 const toiletIcon = L.icon({
@@ -111,7 +113,7 @@ const filterAndMapNodes = async (data) => {
     return markers.filter(marker => marker !== null);
 };
 
-const fetchDataAndAddMarkers = async (map, criteria = {}) => {
+export const fetchDataAndAddMarkers = async (map, criteria = {}) => {
     const bounds = map.getBounds();
     const bbox = `${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()}`;
 

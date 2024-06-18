@@ -1,12 +1,12 @@
 // utils.js
 
-const getUrlParameter = (name) => {
+export const getUrlParameter = (name) => {
     const regex = new RegExp(`[\\?&]${name}=([^&#]*)`);
     const results = regex.exec(location.search);
     return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, ' '));
 };
 
-const setUrlParameters = (params) => {
+export const setUrlParameters = (params) => {
     const baseUrl = `${location.protocol}//${location.host}${location.pathname}`;
     const urlParams = new URLSearchParams(location.search);
 
@@ -17,7 +17,7 @@ const setUrlParameters = (params) => {
     window.history.replaceState({}, '', `${baseUrl}?${urlParams.toString()}`);
 };
 
-const updateTitleAndCount = (count) => {
+export const updateTitleAndCount = (count) => {
     return () => {
         const titleElement = document.getElementById('title');
         const newTitle = `Public Toilets: ${count} locations found`;
@@ -25,7 +25,8 @@ const updateTitleAndCount = (count) => {
     };
 };
 
-const getStepInstruction = (step) => {
+
+export const getStepInstruction = (step) => {
     const { type, modifier } = step.maneuver;
     const action = modifier ? `Turn ${modifier}` : 'Continue';
     const road = step.name || 'the road';
@@ -36,7 +37,7 @@ const getStepInstruction = (step) => {
             : `${action} onto ${road}`;
 };
 
-const saveMapCenterToCookies = (mymap) => {
+export const saveMapCenterToCookies = (mymap) => {
     const center = mymap.getCenter();
     const z = mymap.getZoom();
     const lat = center.lat.toFixed(6);
@@ -47,7 +48,7 @@ const saveMapCenterToCookies = (mymap) => {
     Cookies.set('mapZoom', z, { expires: 2 });
 };
 
-const getUserPosition = (callback) => {
+export const getUserPosition = (callback) => {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(callback, (error) => console.error("Error getting user position:", error));
     } else {

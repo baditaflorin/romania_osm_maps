@@ -1,4 +1,6 @@
-// map.js
+import { getUrlParameter, setUrlParameters, saveMapCenterToCookies } from './utils.js';
+import { onMapClick, isAddingSource } from './addSource.js';
+import {fetchDataAndAddMarkers} from './data.js';
 
 const addGeolocateButton = (map) => {
     const container = document.getElementById('geolocate-container');
@@ -21,7 +23,6 @@ const addGeolocateButton = (map) => {
     container.appendChild(button);
 };
 
-// Initialize the global mymap variable
 let mymap;
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -55,9 +56,6 @@ document.addEventListener("DOMContentLoaded", function() {
     mymap.on('moveend', updateMapState);
     mymap.on('zoomend', updateMapState);
 });
-
-
-
 
 const initializeMap = () => {
     const initialLat = parseFloat(getUrlParameter('lat')) || parseFloat(Cookies.get('mapLat')) || 45.943200;
@@ -126,7 +124,6 @@ const addNewToiletSourceButton = (map) => {
     map.addControl(new addSourceControl({ position: 'bottomright' }));
 };
 
-
 const setupEventListeners = (map) => {
     document.getElementById('apply-filters').addEventListener('click', () => {
         const selectedFilters = Array.from(document.querySelectorAll('#filters input:checked')).map(input => ({
@@ -180,4 +177,4 @@ const populateFilters = (topKeyValues) => {
     });
 };
 
-
+export { addGeolocateButton, initializeMap, addNewToiletSourceButton, setupEventListeners, populateFilters, mymap };

@@ -1,8 +1,8 @@
-// addSource.js
+import { showModal, hideModal } from './modal.js';
+import { mymap } from './map.js';
 
-let isAddingSource = false;
+export let isAddingSource = false;
 
-// Utility function to create elements with attributes and children
 const createElement = (tag, attrs = {}, children = []) => {
     const element = document.createElement(tag);
     Object.entries(attrs).forEach(([key, value]) => element.setAttribute(key, value));
@@ -10,10 +10,8 @@ const createElement = (tag, attrs = {}, children = []) => {
     return element;
 };
 
-// Generic function to generate form elements
 const generateFormElements = (fields) => fields.map(({ tag, attrs, children }) => createElement(tag, attrs, children));
 
-// Function to generate form structure
 const generateFormStructure = (fieldData, additionalFieldsData) => [
     ...generateFormElements(fieldData),
     createElement('button', { type: 'button', id: 'toggle-additional-fields' }, [document.createTextNode('Add More Details')]),
@@ -21,8 +19,6 @@ const generateFormStructure = (fieldData, additionalFieldsData) => [
     createElement('button', { type: 'submit' }, [document.createTextNode('Add Source')])
 ];
 
-// Function to generate initial form HTML
-// Update the .additional-fields CSS to apply the same grid layout
 const generateInitialFormHTML = (fieldData, additionalFieldsData) => {
     const form = createElement('form', { id: 'add-source-form', class: 'popup-form' }, generateFormStructure(fieldData, additionalFieldsData));
     const style = `
@@ -86,14 +82,11 @@ const generateInitialFormHTML = (fieldData, additionalFieldsData) => {
     return `<style>${style}</style>${form.outerHTML}`;
 };
 
-// Function to toggle the visibility of additional fields
 const toggleAdditionalFieldsVisibility = () => {
     const additionalFields = document.getElementById('additional-fields');
     additionalFields.style.display = additionalFields.style.display === 'none' ? 'contents' : 'none';
 };
 
-
-// Function to extract form data and create tags
 const extractTagsFromForm = (formData, mandatoryFields, optionalFields) => {
     const tags = {};
 
@@ -114,7 +107,6 @@ const extractTagsFromForm = (formData, mandatoryFields, optionalFields) => {
     return tags;
 };
 
-// Function to handle form submission
 const handleFormSubmit = (event, lat, lon, mandatoryFields, optionalFields) => {
     event.preventDefault();
     const formData = new FormData(event.target);
@@ -122,7 +114,6 @@ const handleFormSubmit = (event, lat, lon, mandatoryFields, optionalFields) => {
     addNodeToOSM(lat, lon, tags);
 };
 
-// Function to add a marker to the map
 const addMarkerToMap = (lat, lon, fieldData, additionalFieldsData, mandatoryFields, optionalFields) => {
     const popupContent = generateInitialFormHTML(fieldData, additionalFieldsData);
     const marker = L.marker([lat, lon]).addTo(mymap).bindPopup(popupContent).openPopup();
@@ -137,7 +128,6 @@ const addMarkerToMap = (lat, lon, fieldData, additionalFieldsData, mandatoryFiel
     document.getElementById('toggle-additional-fields').addEventListener('click', toggleAdditionalFieldsVisibility);
 };
 
-// Function to handle map click
 const onMapClick = (e) => {
     if (isAddingSource) return;
     isAddingSource = true;
@@ -162,8 +152,7 @@ const onMapClick = (e) => {
         { tag: 'select', attrs: { id: 'toilets:paper_supplied', name: 'toilets:paper_supplied' }, children: [
                 createElement('option', { value: 'yes' }, [document.createTextNode('Yes')]),
                 createElement('option', { value: 'no' }, [document.createTextNode('No')])
-            ]},
-
+            ]}
     ];
 
     const additionalFieldsData = [
@@ -236,40 +225,6 @@ const onMapClick = (e) => {
     addMarkerToMap(lat, lon, fieldData, additionalFieldsData, mandatoryFields, optionalFields);
 };
 
-// Function to show modal
-const showModal = (onConfirm, isEdit = false, editUrl = '') => {
-    const modal = document.getElementById('source-modal');
-    modal.style.display = 'block';
-
-    const confirmButton = document.getElementById('confirm-add-source');
-    confirmButton.onclick = () => {
-        if (isEdit) {
-            window.open(editUrl, '_blank');
-            Cookies.set('hasSeenEditModal', 'true', { expires: 365 });
-        } else {
-            onConfirm();
-            Cookies.set('hasSeenAddModal', 'true', { expires: 365 });
-        }
-        hideModal();
-    };
-
-    const closeButton = document.getElementById('close-modal');
-    closeButton.onclick = hideModal;
-
-    window.onclick = (event) => {
-        if (event.target === modal) {
-            hideModal();
-        }
-    };
-};
-
-// Function to hide modal
-const hideModal = () => {
-    const modal = document.getElementById('source-modal');
-    modal.style.display = 'none';
-};
-
-// Function to add node to OSM
 const addNodeToOSM = async (lat, lon, tags) => {
     try {
         const response = await fetch('/addnode', {
@@ -294,5 +249,4 @@ const addNodeToOSM = async (lat, lon, tags) => {
     }
 };
 
-// Event listener for map clicks
-// mymap.on('click', onMapClick);
+export { createElement, generateFormElements, generateFormStructure, generateInitialFormHTML, toggleAdditionalFieldsVisibility, extractTagsFromForm, handleFormSubmit, addMarkerToMap, onMapClick, addNodeToOSM };
