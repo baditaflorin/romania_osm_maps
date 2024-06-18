@@ -21,6 +21,7 @@ func main() {
 	router.HandleFunc("/data", handlers.HandleData(cfg)).Methods("GET")
 	router.HandleFunc("/login", handlers.HandleLogin(cfg)).Methods("GET")
 	router.HandleFunc("/callback", handlers.HandleCallback(cfg)).Methods("GET")
+	http.HandleFunc("/addnode", handlers.HandleAddNode(cfg))
 
 	// Serve static files
 	fs := http.FileServer(http.Dir("./static"))
