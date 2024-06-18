@@ -1,4 +1,4 @@
-import { getUrlParameter, setUrlParameters, saveMapCenterToCookies } from './utils.js';
+import { getUrlParameter, setUrlParameters, saveMapCenterToCookies, getUserPosition } from './utils.js';
 import { onMapClick, isAddingSource } from './addSource.js';
 import {fetchDataAndAddMarkers} from './data.js';
 

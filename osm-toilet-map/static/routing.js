@@ -1,3 +1,7 @@
+// routing.js
+
+import {getUserPosition, } from './utils.js';
+
 let routeLayer;
 let highlightedSegment;
 
@@ -90,7 +94,7 @@ const handleRouteData = (data) => {
     }
 };
 
-const routeToNode = (lat, lon) => {
+export const routeToNode = (lat, lon) => {
     getUserPosition((position) => {
         const userLat = position.coords.latitude.toFixed(6);
         const userLon = position.coords.longitude.toFixed(6);

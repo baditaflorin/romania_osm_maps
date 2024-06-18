@@ -1,6 +1,7 @@
 // data.js
 
-import {updateTitleAndCount} from "./utils.js";
+import { updateTitleAndCount } from "./utils.js";
+import { routeToNode } from "./routing.js";
 
 const markers = L.markerClusterGroup();
 
@@ -57,15 +58,17 @@ const createPopupContent = async (node, denumire) => {
             mapillaryLink = `<a href="https://www.mapillary.com/app/?pKey=${node.tags.mapillary}" target="_blank"><img src="${thumbnailUrl}" alt="Mapillary Photo" style="max-width: 100%; height: auto;"></a><br>`;
         }
     }
-    return `
-        <div class="popup-content">
-            <b>${denumire}</b><br>
-            ${formatTags(node.tags)}
-            <div class="mapillary-thumbnail">${mapillaryLink}</div>
-            <a href="#" class="edit-link" onclick="editNode('${node.id}'); return false;">Edit this node</a>
-            <br>
-            <button onclick="routeToNode(${node.lat.toFixed(6)},${node.lon.toFixed(6)})" class="route-button">Route to here</button>
-        </div>`;
+    const div = document.createElement('div');
+    div.className = 'popup-content';
+    div.innerHTML = `
+        <b>${denumire}</b><br>
+        ${formatTags(node.tags)}
+        <div class="mapillary-thumbnail">${mapillaryLink}</div>
+        <a href="#" class="edit-link" data-node-id="${node.id}">Edit this node</a><br>
+        <button class="route-button" data-lat="${node.lat}" data-lon="${node.lon}">Route to here</button>
+    `;
+
+    return div;
 };
 
 const editNode = (nodeId) => {
@@ -83,7 +86,22 @@ const createMarker = async (node) => {
     const { type, icon } = getNodeTypeAndIcon(node) || {};
     if (!type || !icon) return null;
     const popupContent = await createPopupContent(node, type);
-    return L.marker([node.lat, node.lon], { icon }).bindPopup(popupContent);
+    const marker = L.marker([node.lat, node.lon], { icon }).bindPopup(popupContent);
+
+    marker.on('popupopen', () => {
+        const popupElement = marker.getPopup().getElement();
+        popupElement.querySelector('.edit-link').addEventListener('click', (event) => {
+            event.preventDefault();
+            editNode(event.target.dataset.nodeId);
+        });
+        popupElement.querySelector('.route-button').addEventListener('click', (event) => {
+            const lat = parseFloat(event.target.dataset.lat);
+            const lon = parseFloat(event.target.dataset.lon);
+            routeToNode(lat, lon);
+        });
+    });
+
+    return marker;
 };
 
 const filterAndMapNodes = async (data) => {
@@ -138,4 +156,3 @@ export const fetchDataAndAddMarkers = async (map, criteria = {}) => {
         console.error('Error fetching data and adding markers:', error);
     }
 };
-
