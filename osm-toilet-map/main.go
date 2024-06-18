@@ -13,15 +13,10 @@ import (
 
 func main() {
 	cfg := config.LoadConfig()
-
 	oauth.Init(cfg)
 
 	router := mux.NewRouter()
-	router.HandleFunc("/", handlers.HandleMap(cfg)).Methods("GET")
-	router.HandleFunc("/data", handlers.HandleData(cfg)).Methods("GET")
-	router.HandleFunc("/login", handlers.HandleLogin(cfg)).Methods("GET")
-	router.HandleFunc("/callback", handlers.HandleCallback(cfg)).Methods("GET")
-	http.HandleFunc("/addnode", handlers.HandleAddNode(cfg))
+	initializeRoutes(router, cfg)
 
 	// Serve static files
 	fs := http.FileServer(http.Dir("./static"))
@@ -29,8 +24,20 @@ func main() {
 
 	http.Handle("/", router)
 
-	fmt.Printf("Server starting on :%s...\n", cfg.Port)
-	if err := http.ListenAndServe(":"+cfg.Port, nil); err != nil {
+	startServer(cfg.Port)
+}
+
+func initializeRoutes(router *mux.Router, cfg *config.Config) {
+	router.HandleFunc("/", handlers.HandleMap(cfg)).Methods("GET")
+	router.HandleFunc("/data", handlers.HandleData(cfg)).Methods("GET")
+	router.HandleFunc("/login", handlers.HandleLogin(cfg)).Methods("GET")
+	router.HandleFunc("/callback", handlers.HandleCallback(cfg)).Methods("GET")
+	router.HandleFunc("/addnode", handlers.HandleAddNode(cfg))
+}
+
+func startServer(port string) {
+	fmt.Printf("Server starting on :%s...\n", port)
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Fatalf("Error starting server: %s", err)
 	}
 }

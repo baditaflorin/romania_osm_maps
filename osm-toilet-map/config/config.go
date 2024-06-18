@@ -1,4 +1,3 @@
-// config/config.go
 package config
 
 import (
@@ -27,24 +26,38 @@ func LoadConfig() *Config {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-
-	redirectURIBase := os.Getenv("REDIRECT_URI_BASE")
-	redirectURICallback := os.Getenv("REDIRECT_URI_CALLBACK")
-	redirectURI := fmt.Sprintf("%s:%s%s", redirectURIBase, port, redirectURICallback)
-
 	return &Config{
-		ClientID:         os.Getenv("CLIENT_ID"),
-		ClientSecret:     os.Getenv("CLIENT_SECRET"),
-		RedirectURI:      redirectURI,
-		AuthURL:          os.Getenv("AUTH_URL"),
-		TokenURL:         os.Getenv("TOKEN_URL"),
-		Query:            os.Getenv("QUERY"),
-		ChangesetComment: os.Getenv("CHANGESET_COMMENT"),
-		CreatedBy:        os.Getenv("CREATED_BY"),
-		Port:             port,
+		ClientID:         getEnv("CLIENT_ID"),
+		ClientSecret:     getEnv("CLIENT_SECRET"),
+		RedirectURI:      getRedirectURI(),
+		AuthURL:          getEnv("AUTH_URL"),
+		TokenURL:         getEnv("TOKEN_URL"),
+		Query:            getEnv("QUERY"),
+		ChangesetComment: getEnv("CHANGESET_COMMENT"),
+		CreatedBy:        getEnv("CREATED_BY"),
+		Port:             getEnvWithDefault("PORT", "8080"),
 	}
+}
+
+func getEnv(key string) string {
+	value := os.Getenv(key)
+	if value == "" {
+		log.Fatalf("%s is not set in the environment variables", key)
+	}
+	return value
+}
+
+func getEnvWithDefault(key, defaultValue string) string {
+	value := os.Getenv(key)
+	if value == "" {
+		return defaultValue
+	}
+	return value
+}
+
+func getRedirectURI() string {
+	redirectURIBase := getEnv("REDIRECT_URI_BASE")
+	port := getEnvWithDefault("PORT", "8080")
+	redirectURICallback := getEnv("REDIRECT_URI_CALLBACK")
+	return fmt.Sprintf("%s:%s%s", redirectURIBase, port, redirectURICallback)
 }
