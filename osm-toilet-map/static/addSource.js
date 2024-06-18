@@ -86,9 +86,6 @@ const generateInitialFormHTML = (fieldData, additionalFieldsData) => {
     return `<style>${style}</style>${form.outerHTML}`;
 };
 
-
-
-// Function to toggle the visibility of additional fields
 // Function to toggle the visibility of additional fields
 const toggleAdditionalFieldsVisibility = () => {
     const additionalFields = document.getElementById('additional-fields');
@@ -221,21 +218,6 @@ const onMapClick = (e) => {
                 createElement('option', { value: 'yes' }, [document.createTextNode('Yes')]),
                 createElement('option', { value: 'no' }, [document.createTextNode('No')])
             ]},
-        { tag: 'label', attrs: { for: 'handwashing:hand_disinfection' }, children: [document.createTextNode('Hand Disinfection:')] },
-        { tag: 'select', attrs: { id: 'handwashing:hand_disinfection', name: 'handwashing:hand_disinfection' }, children: [
-                createElement('option', { value: 'yes' }, [document.createTextNode('Yes')]),
-                createElement('option', { value: 'no' }, [document.createTextNode('No')])
-            ]},
-        { tag: 'label', attrs: { for: 'handwashing:creme' }, children: [document.createTextNode('Hand Care Cream:')] },
-        { tag: 'select', attrs: { id: 'handwashing:creme', name: 'handwashing:creme' }, children: [
-                createElement('option', { value: 'yes' }, [document.createTextNode('Yes')]),
-                createElement('option', { value: 'no' }, [document.createTextNode('No')])
-            ]},
-        { tag: 'label', attrs: { for: 'hot_water' }, children: [document.createTextNode('Hot Water:')] },
-        { tag: 'select', attrs: { id: 'hot_water', name: 'hot_water' }, children: [
-                createElement('option', { value: 'yes' }, [document.createTextNode('Yes')]),
-                createElement('option', { value: 'no' }, [document.createTextNode('No')])
-            ]},
         { tag: 'label', attrs: { for: 'toilets:menstrual_products' }, children: [document.createTextNode('Menstrual Products:')] },
         { tag: 'select', attrs: { id: 'toilets:menstrual_products', name: 'toilets:menstrual_products' }, children: [
                 createElement('option', { value: 'yes' }, [document.createTextNode('Yes')]),
@@ -247,7 +229,8 @@ const onMapClick = (e) => {
     const mandatoryFields = ['amenity'];
     const optionalFields = [
         'access', 'wheelchair', 'wheelchair:description:en', 'unisex', 'fee',
-        'opening_hours', 'toilets:wheelchair', 'changing_table', 'toilets:disposal', 'toilets:position'
+        'opening_hours', 'toilets:wheelchair', 'changing_table', 'toilets:disposal', 'toilets:position',
+        'toilets:handwashing', 'handwashing:soap','toilets:menstrual_products',
     ];
 
     addMarkerToMap(lat, lon, fieldData, additionalFieldsData, mandatoryFields, optionalFields);
@@ -312,4 +295,4 @@ const addNodeToOSM = async (lat, lon, tags) => {
 };
 
 // Event listener for map clicks
-mymap.on('click', onMapClick);
+// mymap.on('click', onMapClick);
