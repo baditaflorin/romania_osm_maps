@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Public Toilets Map</title>
+    <link href="https://unpkg.com/leaflet/dist/leaflet.css" rel="stylesheet"/>
+    <link href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" rel="stylesheet"/>
+    <link href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/@mapbox/polyline@1.1.1/src/polyline.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.1/js.cookie.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="static/utils.js"></script>
+    <script src="static/map.js"></script>
+    <script src="static/routing.js"></script>
+    <script src="static/data.js"></script>
+    <script src="static/instructions.js"></script>
+    <script src="static/search.js"></script>
+    <script src="static/addSource.js"></script>
+    <script src="static/filter.js"></script>
+    <script src="static/analyzeData.js"></script>
+</head>
+<body>
+
+<!-- Title Section -->
+<div id="title"></div>
+
+<!-- Map Section -->
+<div id="mapid"></div>
+
+<!-- Login Section -->
+<div id="login">
+    <a href="/login">Log in with OpenStreetMap</a>
+</div>
+
+<!-- Search and Filter Section -->
+<div id="search-filter-container">
+    <div id="search-container">
+        <input type="text" id="search-input" class="search-input" placeholder="Search location...">
+        <button id="search-button" class="search-button">Search</button>
+    </div>
+    <div id="filter-container">
+        <button id="toggle-filters">Show Filters</button>
+        <div id="filters-content">
+            <h3>Filter by:</h3>
+            <div id="filters"></div>
+            <button id="apply-filters">Apply Filters</button>
+            <button id="clear-filters">Clear Filters</button>
+        </div>
+    </div>
+</div>
+
+<!-- Geolocate Button Container -->
+<div id="geolocate-container"></div>
+
+<!-- Instructions Section -->
+<div id="instructions-container">
+    <button id="toggle-instructions" style="display: none;">Show Route Instructions</button>
+    <div id="instructions"></div>
+</div>
+
+<!-- Project Info Section -->
+<div id="project-info-container">
+    <button id="toggle-project-info">Show Project Info</button>
+    <div id="project-info" style="display: none;">
+        <h2>Public Toilets Map</h2>
+        <p>This project aims to map all the public toilets to help users find nearby facilities.</p>
+        <h3>How to Add a New Source</h3>
+        <p>To add a new toilet, follow these steps:</p>
+        <ol>
+            <li>Click on the "Add Toilet" button located at the bottom right of the map.</li>
+            <li>Click on the map where the new source is located.</li>
+            <li>Fill out the form with the necessary details about the toilet.</li>
+            <li>Click "Add Source" to submit the information.</li>
+        </ol>
+        <p>You need to have an OpenStreetMap account to add new sources. OpenStreetMap (OSM) is a collaborative project to create a free, editable map of the world. Having an OSM account allows you to contribute to the global mapping community and helps ensure the data's accuracy and reliability.</p>
+        <h3>Edit Existing Toilets</h3>
+        <p>You can also edit existing toilets by clicking on any node and editing it in the OpenStreetMap iD Editor. This allows you to update information about the toilet, ensuring the map remains accurate and up-to-date.</p>
+        <p>You can find me at baditaflorin@gmail.com</p>
+    </div>
+</div>
+
+<!-- Modal for Adding/Editing Source -->
+<div id="source-modal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="close-modal">&times;</span>
+        <h2>Adding or Editing a Toilet</h2>
+        <p>To add a new toilet, click on the map where the source is located, then fill out the form with the necessary details. Ensure you have an OpenStreetMap account to contribute.</p>
+        <p>If you are editing an existing source, click on the node and you will be redirected to the OpenStreetMap iD Editor where you can update the details.</p>
+        <button id="confirm-add-source">Proceed</button>
+    </div>
+</div>
+
+<script>
+    // Utility functions are now in utils.js
+</script>
+
+</body>
+</html>
