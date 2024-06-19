@@ -4,22 +4,29 @@ import { mymap } from './map.js';
 export let isAddingSource = false;
 
 const createElement = (tag, attrs = {}, children = []) => {
+    console.log('Creating element:', tag, attrs);
     const element = document.createElement(tag);
     Object.entries(attrs).forEach(([key, value]) => element.setAttribute(key, value));
     children.forEach(child => element.appendChild(child));
     return element;
 };
 
+
 const generateFormElements = (fields) => fields.map(({ tag, attrs, children }) => createElement(tag, attrs, children));
 
-const generateFormStructure = (fieldData, additionalFieldsData) => [
-    ...generateFormElements(fieldData),
-    createElement('button', { type: 'button', id: 'toggle-additional-fields' }, [document.createTextNode('Add More Details')]),
-    createElement('div', { class: 'additional-fields', id: 'additional-fields' }, generateFormElements(additionalFieldsData)),
-    createElement('button', { type: 'submit' }, [document.createTextNode('Add Source')])
-];
+const generateFormStructure = (fieldData, additionalFieldsData) => {
+    console.log('Generating form structure');
+    return [
+        ...generateFormElements(fieldData),
+        createElement('button', { type: 'button', id: 'toggle-additional-fields' }, [document.createTextNode('Add More Details')]),
+        createElement('div', { class: 'additional-fields', id: 'additional-fields' }, generateFormElements(additionalFieldsData)),
+        createElement('button', { type: 'submit' }, [document.createTextNode('Add Source')])
+    ];
+};
 
 const generateInitialFormHTML = (fieldData, additionalFieldsData) => {
+    console.log('Generating initial form HTML');
+
     const form = createElement('form', { id: 'add-source-form', class: 'popup-form' }, generateFormStructure(fieldData, additionalFieldsData));
     const style = `
         .popup-form {
@@ -88,6 +95,8 @@ const toggleAdditionalFieldsVisibility = () => {
 };
 
 const extractTagsFromForm = (formData, mandatoryFields, optionalFields) => {
+    console.log('Extracting tags from form data');
+
     const tags = {};
 
     mandatoryFields.forEach(field => {
@@ -108,13 +117,17 @@ const extractTagsFromForm = (formData, mandatoryFields, optionalFields) => {
 };
 
 const handleFormSubmit = (event, lat, lon, mandatoryFields, optionalFields) => {
+
     event.preventDefault();
     const formData = new FormData(event.target);
     const tags = extractTagsFromForm(formData, mandatoryFields, optionalFields);
     addNodeToOSM(lat, lon, tags);
+    console.log('Form submitted');
 };
 
 const addMarkerToMap = (lat, lon, fieldData, additionalFieldsData, mandatoryFields, optionalFields) => {
+    console.log('Adding marker to map at:', lat, lon);
+
     const popupContent = generateInitialFormHTML(fieldData, additionalFieldsData);
     const marker = L.marker([lat, lon]).addTo(mymap).bindPopup(popupContent).openPopup();
 
@@ -129,6 +142,8 @@ const addMarkerToMap = (lat, lon, fieldData, additionalFieldsData, mandatoryFiel
 };
 
 const onMapClick = (e) => {
+    console.log('Map clicked at:', e.latlng);
+
     if (isAddingSource) return;
     isAddingSource = true;
     const { lat, lng: lon } = e.latlng;

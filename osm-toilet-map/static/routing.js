@@ -1,6 +1,6 @@
 // routing.js
-
-import {getUserPosition, } from './utils.js';
+import { getUserPosition } from './utils.js';
+import { mymap } from './map.js';
 
 let routeLayer;
 let highlightedSegment;
@@ -81,7 +81,7 @@ const createRoutingUrl = (userLat, userLon, lat, lon) => {
 };
 
 const fetchRouteData = (routingUrl) => {
-    return $.getJSON(routingUrl);
+    return fetch(routingUrl).then(response => response.json());
 };
 
 const handleRouteData = (data) => {

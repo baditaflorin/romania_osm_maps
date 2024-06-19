@@ -23,68 +23,6 @@ const addGeolocateButton = (map) => {
     container.appendChild(button);
 };
 
-let mymap;
-
-document.addEventListener("DOMContentLoaded", function() {
-    const initialLat = parseFloat(getUrlParameter('lat')) || parseFloat(Cookies.get('mapLat')) || 45.9432;
-    const initialLon = parseFloat(getUrlParameter('lon')) || parseFloat(Cookies.get('mapLon')) || 24.9668;
-    const initialZoom = parseInt(getUrlParameter('z'), 10) || parseInt(Cookies.get('mapZoom'), 10) || 7;
-
-    mymap = L.map('mapid').setView([initialLat, initialLon], initialZoom);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap'
-    }).addTo(mymap);
-
-    addGeolocateButton(mymap);
-    addNewToiletSourceButton(mymap);
-
-    fetchDataAndAddMarkers(mymap);
-
-    const updateMapState = () => {
-        const center = mymap.getCenter();
-        const zoom = mymap.getZoom();
-        setUrlParameters({
-            lat: center.lat.toFixed(6),
-            lon: center.lng.toFixed(6),
-            z: zoom
-        });
-        saveMapCenterToCookies(mymap);
-    };
-
-    mymap.on('moveend', updateMapState);
-    mymap.on('zoomend', updateMapState);
-});
-
-const initializeMap = () => {
-    const initialLat = parseFloat(getUrlParameter('lat')) || parseFloat(Cookies.get('mapLat')) || 45.943200;
-    const initialLon = parseFloat(getUrlParameter('lon')) || parseFloat(Cookies.get('mapLon')) || 24.966800;
-    const initialZoom = parseInt(getUrlParameter('z'), 10) || parseInt(Cookies.get('mapZoom'), 10) || 7;
-
-    const map = L.map('mapid').setView([initialLat, initialLon], initialZoom);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© OpenStreetMap'
-    }).addTo(map);
-
-    const updateMapState = () => {
-        const center = map.getCenter();
-        const z = map.getZoom();
-        setUrlParameters({
-            lat: center.lat.toFixed(6),
-            lon: center.lng.toFixed(6),
-            z: z
-        });
-        saveMapCenterToCookies(map);
-    };
-
-    map.on('moveend', updateMapState);
-    map.on('zoomend', updateMapState);
-
-    return map;
-};
-
 const addNewToiletSourceButton = (map) => {
     const addSourceControl = L.Control.extend({
         onAdd: function(map) {
@@ -123,6 +61,41 @@ const addNewToiletSourceButton = (map) => {
 
     map.addControl(new addSourceControl({ position: 'bottomright' }));
 };
+
+
+const initializeMap = () => {
+    const initialLat = parseFloat(getUrlParameter('lat')) || parseFloat(Cookies.get('mapLat')) || 45.9432;
+    const initialLon = parseFloat(getUrlParameter('lon')) || parseFloat(Cookies.get('mapLon')) || 24.9668;
+    const initialZoom = parseInt(getUrlParameter('z'), 10) || parseInt(Cookies.get('mapZoom'), 10) || 7;
+
+    const map = L.map('mapid').setView([initialLat, initialLon], initialZoom);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    addGeolocateButton(map);
+    addNewToiletSourceButton(map);
+    fetchDataAndAddMarkers(map);
+
+    const updateMapState = () => {
+        const center = map.getCenter();
+        const zoom = map.getZoom();
+        setUrlParameters({
+            lat: center.lat.toFixed(6),
+            lon: center.lng.toFixed(6),
+            z: zoom
+        });
+        saveMapCenterToCookies(map);
+    };
+
+    map.on('moveend', updateMapState);
+    map.on('zoomend', updateMapState);
+
+    return map;
+};
+
+const mymap = initializeMap();
 
 const setupEventListeners = (map) => {
     document.getElementById('apply-filters').addEventListener('click', () => {
@@ -177,4 +150,4 @@ const populateFilters = (topKeyValues) => {
     });
 };
 
-export { addGeolocateButton, initializeMap, addNewToiletSourceButton, setupEventListeners, populateFilters, mymap };
+export { mymap, addGeolocateButton, initializeMap, addNewToiletSourceButton, setupEventListeners, populateFilters };

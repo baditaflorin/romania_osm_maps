@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="osm toilet - working version , refactored into ES6 modules some part of the code, need to remove some defaults being send">
+    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="osm toilet - working version ,routetoHere broken,  need to remove some defaults being send">
+      <change afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/osm-toilet-map/static/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/osm-toilet-map/static/data.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/osm-toilet-map/static/map.html" beforeDir="false" afterPath="$PROJECT_DIR$/osm-toilet-map/static/map.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/osm-toilet-map/static/addSource.js" beforeDir="false" afterPath="$PROJECT_DIR$/osm-toilet-map/static/addSource.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/osm-toilet-map/static/map.js" beforeDir="false" afterPath="$PROJECT_DIR$/osm-toilet-map/static/map.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/osm-toilet-map/static/routing.js" beforeDir="false" afterPath="$PROJECT_DIR$/osm-toilet-map/static/routing.js" afterDir="false" />
     </list>
@@ -21,6 +21,7 @@
       <list>
         <option value="JavaScript File" />
         <option value="Go File" />
+        <option value="package.json" />
       </list>
     </option>
   </component>
@@ -103,7 +104,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Make Oauth go code into own package" />
     <MESSAGE value="Handle case when user is not logged in" />
     <MESSAGE value="Allow user to set any key value pairs" />
     <MESSAGE value="making code more modular" />
@@ -128,7 +128,8 @@
     <MESSAGE value="osm-zoning Making code more modular" />
     <MESSAGE value="osm-zoning Removed empty keys where there is not value before saving to OpenStreetMap" />
     <MESSAGE value="osm toilet - working version , refactored into ES6 modules some part of the code, need to remove some defaults being send" />
-    <option name="LAST_COMMIT_MESSAGE" value="osm toilet - working version , refactored into ES6 modules some part of the code, need to remove some defaults being send" />
+    <MESSAGE value="osm toilet - working version ,routetoHere broken,  need to remove some defaults being send" />
+    <option name="LAST_COMMIT_MESSAGE" value="osm toilet - working version ,routetoHere broken,  need to remove some defaults being send" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
