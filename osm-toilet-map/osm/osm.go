@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"toilet_map/config"
-	"toilet_map/oauth"
 	"toilet_map/utils"
 )
 
@@ -87,18 +86,12 @@ func FetchNodeDetails(cfg *config.Config, nodeID int64) (*Node, error) {
 	return &data.Elements[0], nil
 }
 
-func UpdateNodeDetails(cfg *config.Config, token *oauth2.Token, nodeID int64, updatedTags map[string]string) error {
+func UpdateNodeDetails(cfg *config.Config, token *oauth2.Token, nodeID int64, updatedTags map[string]string, changesetID int) error {
 	client := oauth2.NewClient(oauth2.NoContext, oauth2.StaticTokenSource(token))
 
-	// Fetch the current node details to get lat, lon, and version
 	node, err := FetchNodeDetails(cfg, nodeID)
 	if err != nil {
 		return fmt.Errorf("failed to fetch node details: %v", err)
-	}
-
-	changesetID, err := oauth.CreateChangeset(cfg, token)
-	if err != nil {
-		return fmt.Errorf("failed to create changeset: %v", err)
 	}
 
 	var tagsXML string
@@ -121,14 +114,11 @@ func UpdateNodeDetails(cfg *config.Config, token *oauth2.Token, nodeID int64, up
 	}
 	req.Header.Set("Authorization", "Bearer "+token.AccessToken)
 
-	_, err = utils.DoRequest(client, req)
+	resp, err := client.Do(req)
 	if err != nil {
 		return fmt.Errorf("failed to update node: %v", err)
 	}
-
-	if err := oauth.CloseChangeset(token, changesetID); err != nil {
-		return fmt.Errorf("failed to close changeset: %v", err)
-	}
+	defer resp.Body.Close()
 
 	log.Printf("Node %d updated successfully\n", nodeID)
 	return nil

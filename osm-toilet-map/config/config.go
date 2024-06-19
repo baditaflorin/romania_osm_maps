@@ -18,6 +18,7 @@ type Config struct {
 	ChangesetComment string
 	CreatedBy        string
 	Port             string
+	ChangesetID      string // New field to store the current changeset ID
 }
 
 func LoadConfig() *Config {

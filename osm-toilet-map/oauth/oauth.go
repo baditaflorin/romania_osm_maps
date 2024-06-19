@@ -1,4 +1,3 @@
-// oauth/oauth.go
 package oauth
 
 import (
@@ -7,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 	"toilet_map/config"
 	"toilet_map/utils"
 
@@ -17,6 +17,7 @@ import (
 var (
 	Oauth2Config *oauth2.Config
 	Store        = sessions.NewCookieStore([]byte("super-secret-key"))
+	ChangesetID  int // Global variable to store the current changeset ID
 )
 
 func Init(cfg *config.Config) {
@@ -37,6 +38,98 @@ func Init(cfg *config.Config) {
 			TokenURL: cfg.TokenURL,
 		},
 	}
+
+	ChangesetID = 0 // Initialize changeset ID
+}
+
+func CreateChangesetIfNeeded(cfg *config.Config, token *oauth2.Token) (int, error) {
+	if ChangesetID != 0 {
+		// Check if the changeset is still open
+		log.Printf("Checking if existing changeset %d is still open", ChangesetID)
+		isOpen, err := IsChangesetOpen(token, ChangesetID)
+		if err != nil {
+			log.Printf("Error checking if changeset %d is open: %v", ChangesetID, err)
+			return 0, err
+		}
+		if isOpen {
+			log.Printf("Reusing open changeset %d", ChangesetID)
+			return ChangesetID, nil
+		}
+		// If not open, close it
+		log.Printf("Closing changeset %d because it is no longer open", ChangesetID)
+		err = CloseChangeset(token, ChangesetID)
+		if err != nil {
+			log.Printf("Error closing changeset %d: %v", ChangesetID, err)
+			return 0, err
+		}
+	}
+
+	// Create a new changeset
+	client := Oauth2Config.Client(oauth2.NoContext, token)
+	req, err := createChangesetRequest(cfg, token)
+	if err != nil {
+		log.Printf("Failed to create changeset request: %v", err)
+		return 0, err
+	}
+	req.Header.Set("Authorization", "Bearer "+token.AccessToken)
+
+	log.Println("Sending changeset creation request")
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Printf("Error creating changeset: %v", err)
+		return 0, err
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("Error reading changeset response body: %v", err)
+		return 0, err
+	}
+
+	log.Printf("Changeset creation response body: %s", string(body))
+
+	var changesetID int
+	fmt.Sscanf(string(body), "%d", &changesetID)
+	log.Printf("Created changeset with ID: %d", changesetID)
+
+	ChangesetID = changesetID // Update the global changeset ID
+	return changesetID, nil
+}
+
+func IsChangesetOpen(token *oauth2.Token, changesetID int) (bool, error) {
+	client := Oauth2Config.Client(oauth2.NoContext, token)
+	url := fmt.Sprintf("https://api.openstreetmap.org/api/0.6/changeset/%d", changesetID)
+	req, err := utils.CreateRequest("GET", url, "application/json", nil)
+	if err != nil {
+		log.Printf("Failed to create request to check if changeset %d is open: %v", changesetID, err)
+		return false, fmt.Errorf("failed to create request: %v", err)
+	}
+	req.Header.Set("Authorization", "Bearer "+token.AccessToken)
+
+	log.Printf("Checking if changeset %d is open", changesetID)
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Printf("Failed to fetch changeset status for changeset %d: %v", changesetID, err)
+		return false, fmt.Errorf("failed to fetch changeset status: %v", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("Failed to read response body for changeset %d: %v", changesetID, err)
+		return false, fmt.Errorf("failed to read response body: %v", err)
+	}
+
+	log.Printf("Response body for changeset %d: %s", changesetID, string(body))
+
+	// Check if the response body contains `open="true"`
+	if strings.Contains(string(body), `open="true"`) {
+		log.Printf("Changeset %d is open", changesetID)
+		return true, nil
+	}
+	log.Printf("Changeset %d is closed", changesetID)
+	return false, nil
 }
 
 func createChangesetRequest(cfg *config.Config, token *oauth2.Token) (*http.Request, error) {
@@ -108,7 +201,7 @@ func CloseChangeset(token *oauth2.Token, changesetID int) error {
 	req.Header.Set("Authorization", "Bearer "+token.AccessToken)
 
 	log.Printf("Sending close changeset request for changeset ID: %d", changesetID)
-	_, err = utils.DoRequest(client, req)
+	_, err = client.Do(req)
 	if err != nil {
 		log.Printf("Error closing changeset: %v", err)
 	} else {
@@ -117,27 +210,24 @@ func CloseChangeset(token *oauth2.Token, changesetID int) error {
 	return err
 }
 
-func CreateMapNode(cfg *config.Config, token *oauth2.Token, lat, lon float64, tags map[string]string) {
-	changesetID, err := CreateChangeset(cfg, token)
+func CreateMapNode(cfg *config.Config, token *oauth2.Token, lat, lon float64, tags map[string]string) error {
+	changesetID, err := CreateChangesetIfNeeded(cfg, token)
 	if err != nil {
-		log.Fatalf("Failed to create changeset: %v", err)
+		return fmt.Errorf("failed to create changeset: %v", err)
 	}
 
 	client := Oauth2Config.Client(oauth2.NoContext, token)
 	req, err := createNodeRequest(changesetID, lat, lon, tags)
 	if err != nil {
-		log.Fatalf("Failed to create request: %v", err)
+		return fmt.Errorf("failed to create request: %v", err)
 	}
 	req.Header.Set("Authorization", "Bearer "+token.AccessToken)
 
 	_, err = utils.DoRequest(client, req)
 	if err != nil {
-		log.Fatalf("Failed to create node: %v", err)
+		return fmt.Errorf("failed to create node: %v", err)
 	}
 
-	fmt.Printf("Node created successfully\n")
-
-	if err := CloseChangeset(token, changesetID); err != nil {
-		log.Fatalf("Failed to close changeset: %v", err)
-	}
+	log.Printf("Node created successfully\n")
+	return nil
 }

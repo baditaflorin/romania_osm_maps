@@ -41,7 +41,6 @@ func HandleFetchNode(cfg *config.Config) http.HandlerFunc {
 
 func HandleUpdateNode(cfg *config.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Get the node ID from the URL
 		nodeIDStr := r.URL.Path[len("/updateNode/"):]
 		log.Printf("Received request to update node with ID: %s", nodeIDStr)
 		nodeID, err := strconv.ParseInt(nodeIDStr, 10, 64)
@@ -51,7 +50,6 @@ func HandleUpdateNode(cfg *config.Config) http.HandlerFunc {
 			return
 		}
 
-		// Parse the incoming JSON payload
 		var updatedTags map[string]string
 		if err := json.NewDecoder(r.Body).Decode(&updatedTags); err != nil {
 			log.Printf("Error parsing request body: %v", err)
@@ -61,7 +59,6 @@ func HandleUpdateNode(cfg *config.Config) http.HandlerFunc {
 
 		log.Printf("Updating node %d with tags: %v", nodeID, updatedTags)
 
-		// Retrieve the OAuth token from the session
 		session, _ := oauth.Store.Get(r, "session-name")
 		token, ok := session.Values["oauth-token"].(*oauth2.Token)
 		if !ok {
@@ -70,8 +67,15 @@ func HandleUpdateNode(cfg *config.Config) http.HandlerFunc {
 			return
 		}
 
-		// Update the node details using the OSM package
-		err = osm.UpdateNodeDetails(cfg, token, nodeID, updatedTags)
+		// Use the CreateChangesetIfNeeded function
+		changesetID, err := oauth.CreateChangesetIfNeeded(cfg, token)
+		if err != nil {
+			log.Printf("Error creating changeset: %v", err)
+			http.Error(w, "Failed to create changeset: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		err = osm.UpdateNodeDetails(cfg, token, nodeID, updatedTags, changesetID)
 		if err != nil {
 			log.Printf("Error updating node details: %v", err)
 			http.Error(w, "Failed to update node details: "+err.Error(), http.StatusInternalServerError)
@@ -158,7 +162,11 @@ func HandleAddNode(cfg *config.Config) http.HandlerFunc {
 		log.Printf("Retrieved OAuth token from session: %v", token)
 
 		// Create the map node using the OAuth token
-		oauth.CreateMapNode(cfg, token, node.Lat, node.Lon, node.Tags)
+		err := oauth.CreateMapNode(cfg, token, node.Lat, node.Lon, node.Tags)
+		if err != nil {
+			http.Error(w, "Failed to create node: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		fmt.Fprintf(w, "Node created successfully")
 	}
