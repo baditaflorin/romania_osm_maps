@@ -3,16 +3,25 @@ import { mymap } from './map.js';
 
 export let isAddingSource = false;
 
-const createElement = (tag, attrs = {}, children = []) => {
+const createElement = (tag, attrs = {}, children = [], style = '') => {
     console.log('Creating element:', tag, attrs);
     const element = document.createElement(tag);
     Object.entries(attrs).forEach(([key, value]) => element.setAttribute(key, value));
+    if (style) {
+        style.split(';').forEach(styleRule => {
+            if (styleRule) {
+                const [property, value] = styleRule.split(':').map(item => item.trim());
+                if (property && value) {
+                    element.style[property] = value;
+                }
+            }
+        });
+    }
     children.forEach(child => element.appendChild(child));
     return element;
 };
 
-
-const generateFormElements = (fields) => fields.map(({ tag, attrs, children }) => createElement(tag, attrs, children));
+const generateFormElements = (fields) => fields.map(({ tag, attrs, children, style }) => createElement(tag, attrs, children, style));
 
 const generateFormStructure = (fieldData, additionalFieldsData) => {
     console.log('Generating form structure');
@@ -32,10 +41,10 @@ const generateInitialFormHTML = (fieldData, additionalFieldsData) => {
         .popup-form {
             display: grid;
             grid-template-columns: 30% 70%;
-            gap: 10px;
+            gap: 6px;
             font-family: Arial, sans-serif;
             font-size: 14px;
-            padding: 10px;
+            padding: 6px;
             width: 100%;
             max-width: 400px;
             box-sizing: border-box;
@@ -69,8 +78,8 @@ const generateInitialFormHTML = (fieldData, additionalFieldsData) => {
         .additional-fields {
             display: none;
             grid-template-columns: 30% 70%;
-            gap: 10px;
-            margin-top: 10px;
+            gap: 6px;
+            margin-top: 6px;
         }
         @media (max-width: 600px) {
             .popup-form {
@@ -117,7 +126,6 @@ const extractTagsFromForm = (formData, mandatoryFields, optionalFields) => {
 };
 
 const handleFormSubmit = (event, lat, lon, mandatoryFields, optionalFields) => {
-
     event.preventDefault();
     const formData = new FormData(event.target);
     const tags = extractTagsFromForm(formData, mandatoryFields, optionalFields);
@@ -149,38 +157,42 @@ const onMapClick = (e) => {
     const { lat, lng: lon } = e.latlng;
 
     const fieldData = [
-        { tag: 'label', attrs: { for: 'type' }, children: [document.createTextNode('Type:')] },
+        { tag: 'label', attrs: { for: 'type' }, children: [document.createTextNode('Type')] },
         { tag: 'select', attrs: { id: 'type', name: 'amenity', required: true }, children: [
                 createElement('option', { value: 'toilets' }, [document.createTextNode('Public Toilet')])
             ]},
-        { tag: 'label', attrs: { for: 'access' }, children: [document.createTextNode('Access:')] },
+        { tag: 'label', attrs: { for: 'access' }, style: 'font-size: x-large',children: [document.createTextNode('🔓')] },
         { tag: 'select', attrs: { id: 'access', name: 'access' }, children: [
-                createElement('option', { value: '' }, [document.createTextNode('')]),
-                createElement('option', { value: 'yes' }, [document.createTextNode('Yes')]),
-                createElement('option', { value: 'customers' }, [document.createTextNode('Customers')]),
-                createElement('option', { value: 'private' }, [document.createTextNode('Private')]),
-                createElement('option', { value: 'no' }, [document.createTextNode('No')])
+                createElement('option', { value: 'yes' }, [document.createTextNode('🔓Yes')]),
+                createElement('option', { value: 'customers' }, [document.createTextNode('🔐Customers')]),
+                createElement('option', { value: 'private' }, [document.createTextNode('🔒Private')]),
+                createElement('option', { value: 'no' }, [document.createTextNode('🔒No')])
             ]},
-        { tag: 'label', attrs: { for: 'fee' }, children: [document.createTextNode('Fee:')] },
+        { tag: 'label', attrs: { for: 'fee' }, style: 'font-size: x-large', children: [document.createTextNode('💶')] },
         { tag: 'input', attrs: { type: 'checkbox', id: 'fee', name: 'fee' } },
-        { tag: 'label', attrs: { for: 'toilets:paper_supplied' }, children: [document.createTextNode('Paper Supplied:')] },
+        { tag: 'label', attrs: { for: 'toilets:paper_supplied' }, style: 'font-size: x-large' ,children: [document.createTextNode('🧻')] },
         { tag: 'select', attrs: { id: 'toilets:paper_supplied', name: 'toilets:paper_supplied' }, children: [
-                createElement('option', { value: '' }, [document.createTextNode('')]),
+                createElement('option', { value: 'no' }, [document.createTextNode('No')]),
                 createElement('option', { value: 'yes' }, [document.createTextNode('Yes')]),
-                createElement('option', { value: 'no' }, [document.createTextNode('No')])
-            ]}
+            ]},
+        { tag: 'label', attrs: { for: 'handwashing:soap' }, style: 'font-size: x-large', children: [document.createTextNode('🧼')] },
+        { tag: 'select', attrs: { id: 'handwashing:soap', name: 'handwashing:soap' }, children: [
+                createElement('option', { value: 'no' }, [document.createTextNode('No')]),
+                createElement('option', { value: 'yes' }, [document.createTextNode('Yes')]),
+            ]},
+        { tag: 'label', attrs: { for: 'changing_table' }, children: [document.createTextNode('👶Table')] },
+        { tag: 'input', attrs: { type: 'checkbox', id: 'changing_table', name: 'changing_table' } },
+        { tag: 'label', attrs: { for: 'wheelchair' }, style: 'font-size: x-large', children: [document.createTextNode('♿')] },
+        { tag: 'select', attrs: { id: 'wheelchair', name: 'wheelchair' }, children: [
+                createElement('option', { value: 'no' }, [document.createTextNode('No')]),
+                createElement('option', { value: 'yes' }, [document.createTextNode('Yes')]),
+                createElement('option', { value: 'limited' }, [document.createTextNode('Limited')]),
+            ]},
     ];
 
     const additionalFieldsData = [
         { tag: 'label', attrs: { for: 'unisex' }, children: [document.createTextNode('Unisex:')] },
         { tag: 'input', attrs: { type: 'checkbox', id: 'unisex', name: 'unisex' } },
-        { tag: 'label', attrs: { for: 'wheelchair' }, children: [document.createTextNode('Wheelchair Accessibility:')] },
-        { tag: 'select', attrs: { id: 'wheelchair', name: 'wheelchair' }, children: [
-                createElement('option', { value: '' }, [document.createTextNode('')]),
-                createElement('option', { value: 'yes' }, [document.createTextNode('Yes')]),
-                createElement('option', { value: 'limited' }, [document.createTextNode('Limited')]),
-                createElement('option', { value: 'no' }, [document.createTextNode('No')])
-            ]},
         { tag: 'label', attrs: { for: 'wheelchair:description:en' }, children: [document.createTextNode('Wheelchair Description:')] },
         { tag: 'input', attrs: { type: 'text', id: 'wheelchair:description:en', name: 'wheelchair:description:en' } },
         { tag: 'label', attrs: { for: 'opening_hours' }, children: [document.createTextNode('Opening Hours:')] },
@@ -191,8 +203,6 @@ const onMapClick = (e) => {
                 createElement('option', { value: 'yes' }, [document.createTextNode('Yes')]),
                 createElement('option', { value: 'no' }, [document.createTextNode('No')])
             ]},
-        { tag: 'label', attrs: { for: 'changing_table' }, children: [document.createTextNode('Changing Table:')] },
-        { tag: 'input', attrs: { type: 'checkbox', id: 'changing_table', name: 'changing_table' } },
         { tag: 'label', attrs: { for: 'toilets:disposal' }, children: [document.createTextNode('Disposal Method:')] },
         { tag: 'select', attrs: { id: 'toilets:disposal', name: 'toilets:disposal' }, children: [
                 createElement('option', { value: '' }, [document.createTextNode('')]),
@@ -224,12 +234,6 @@ const onMapClick = (e) => {
                 createElement('option', { value: 'yes' }, [document.createTextNode('Yes')]),
                 createElement('option', { value: 'no' }, [document.createTextNode('No')])
             ]},
-        { tag: 'label', attrs: { for: 'handwashing:soap' }, children: [document.createTextNode('Soap:')] },
-        { tag: 'select', attrs: { id: 'handwashing:soap', name: 'handwashing:soap' }, children: [
-                createElement('option', { value: '' }, [document.createTextNode('')]),
-                createElement('option', { value: 'yes' }, [document.createTextNode('Yes')]),
-                createElement('option', { value: 'no' }, [document.createTextNode('No')])
-            ]},
         { tag: 'label', attrs: { for: 'toilets:menstrual_products' }, children: [document.createTextNode('Menstrual Products:')] },
         { tag: 'select', attrs: { id: 'toilets:menstrual_products', name: 'toilets:menstrual_products' }, children: [
                 createElement('option', { value: '' }, [document.createTextNode('')]),
@@ -243,7 +247,8 @@ const onMapClick = (e) => {
     const optionalFields = [
         'access', 'wheelchair', 'wheelchair:description:en', 'unisex', 'fee',
         'opening_hours', 'toilets:wheelchair', 'changing_table', 'toilets:disposal', 'toilets:position',
-        'toilets:handwashing', 'handwashing:soap','toilets:menstrual_products',
+        'toilets:handwashing', 'handwashing:soap','toilets:menstrual_products', 'toilets:paper_supplied' ,
+        'changing_table'
     ];
 
     addMarkerToMap(lat, lon, fieldData, additionalFieldsData, mandatoryFields, optionalFields);
