@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"toilet_map/config"
 	"toilet_map/oauth"
 	"toilet_map/osm"
@@ -87,6 +89,42 @@ func HandleUpdateNode(cfg *config.Config) http.HandlerFunc {
 	}
 }
 
+func fetchNodesByQuery(cfg *config.Config, query string, bbox string) (*osm.Data, error) {
+	url := "https://overpass-api.de/api/interpreter"
+	query = strings.Replace(query, "{{bbox}}", bbox, 1)
+
+	resp, err := http.Post(url, "text/plain", strings.NewReader(query))
+	if err != nil {
+		return nil, fmt.Errorf("error fetching data from Overpass API: %s", err)
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("error reading response from Overpass API: %s", err)
+	}
+
+	var data osm.Data
+	err = json.Unmarshal(body, &data)
+	if err != nil {
+		return nil, fmt.Errorf("error parsing JSON: %s", err)
+	}
+
+	return &data, nil
+}
+
+//func HandleData(cfg *config.Config) http.HandlerFunc {
+//	return func(w http.ResponseWriter, r *http.Request) {
+//		bbox := r.URL.Query().Get("bbox")
+//		if bbox == "" {
+//			http.Error(w, "Bounding box is required", http.StatusBadRequest)
+//			return
+//		}
+//		osm.FetchNodes(cfg, bbox)
+//		w.Header().Set("Content-Type", "application/json")
+//		json.NewEncoder(w).Encode(osm.Nodes.Elements)
+//	}
+//}
+
 func HandleData(cfg *config.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		bbox := r.URL.Query().Get("bbox")
@@ -94,9 +132,31 @@ func HandleData(cfg *config.Config) http.HandlerFunc {
 			http.Error(w, "Bounding box is required", http.StatusBadRequest)
 			return
 		}
-		osm.FetchNodes(cfg, bbox)
+
+		toilets, err := fetchNodesByQuery(cfg, cfg.QueryToilets, bbox)
+		if err != nil {
+			http.Error(w, "Failed to fetch toilets: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		gasStations, err := fetchNodesByQuery(cfg, cfg.QueryGasStations, bbox)
+		if err != nil {
+			http.Error(w, "Failed to fetch gas stations: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		restaurants, err := fetchNodesByQuery(cfg, cfg.QueryRestaurants, bbox)
+		if err != nil {
+			http.Error(w, "Failed to fetch restaurants: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		responseData := map[string]interface{}{
+			"toilets":     toilets.Elements,
+			"gasStations": gasStations.Elements,
+			"restaurants": restaurants.Elements,
+		}
+
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(osm.Nodes.Elements)
+		json.NewEncoder(w).Encode(responseData)
 	}
 }
 

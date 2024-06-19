@@ -6,25 +6,44 @@ import {filterData} from "./filter.js";
 import { fetchNodeDetails, updateNodeDetails, editInPlace } from './editInPlace.js';
 
 const markers = L.markerClusterGroup();
-let allData = []; // Store all fetched data
+let allData = { toilets: [], gasStations: [], restaurants: [] }; // Store all fetched data
 
-const toiletIcon = L.icon({
-    iconUrl: '/static/toilet_icon.png',
-    iconSize: [32, 37],
-    iconAnchor: [16, 37],
-    popupAnchor: [0, -28],
-    className: 'toilet-icon'
-});
+const icons = {
+    toilet: L.icon({
+        iconUrl: '/static/toilet_icon.png',
+        iconSize: [32, 37],
+        iconAnchor: [16, 37],
+        popupAnchor: [0, -28],
+        className: 'toilet-icon'
+    }),
+    gasStation: L.icon({
+        iconUrl: '/static/gas_station_icon.png',
+        iconSize: [32, 37],
+        iconAnchor: [16, 37],
+        popupAnchor: [0, -28],
+        className: 'gas-station-icon'
+    }),
+    restaurant: L.icon({
+        iconUrl: '/static/restaurant_icon.png',
+        iconSize: [32, 37],
+        iconAnchor: [16, 37],
+        popupAnchor: [0, -28],
+        className: 'restaurant-icon'
+    })
+};
 
 const getNodeTypeAndIcon = (node) => {
     if (node.tags.amenity === 'toilets') {
-        return {
-            type: 'toilet',
-            icon: toiletIcon
-        };
+        return { type: 'toilet', icon: icons.toilet };
+    } else if (node.tags.amenity === 'fuel') {
+        return { type: 'gasStation', icon: icons.gasStation };
+    } else if (node.tags.amenity === 'restaurant') {
+        return { type: 'restaurant', icon: icons.restaurant };
     }
     return null;
 };
+
+
 
 const formatTags = (tags) => {
     return Object.entries(tags)
@@ -89,6 +108,7 @@ const editNode = (nodeId) => {
     }
 };
 
+// Create markers and popups for each type of node
 const createMarker = async (node) => {
     const { type, icon } = getNodeTypeAndIcon(node) || {};
     if (!type || !icon) return null;
@@ -114,6 +134,7 @@ const createMarker = async (node) => {
 
     return marker;
 };
+
 
 
 const filterAndMapNodes = async (data) => {
@@ -144,19 +165,23 @@ const filterAndMapNodes = async (data) => {
 };
 
 
+// Fetch data and add markers for all types of nodes
 export const fetchDataAndAddMarkers = async (map, criteria = {}) => {
     if (!map || typeof map.getBounds !== 'function') {
         console.error('Invalid map object');
         return;
     }
 
-    if (allData.length === 0) {
+    if (allData.toilets.length === 0 && allData.gasStations.length === 0 && allData.restaurants.length === 0) {
         const bounds = map.getBounds();
         const bbox = `${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()}`;
 
         try {
             const response = await fetch(`/data?bbox=${bbox}`);
-            allData = await response.json();
+            const data = await response.json();
+            allData.toilets = data.toilets;
+            allData.gasStations = data.gasStations;
+            allData.restaurants = data.restaurants;
         } catch (error) {
             console.error('Error fetching data:', error);
             return;
@@ -170,7 +195,14 @@ export const fetchDataAndAddMarkers = async (map, criteria = {}) => {
         return;
     }
 
-    const filteredData = filterData(allData, criteria);
+    // Combine all data into a single array for filtering and mapping
+    const combinedData = [
+        ...allData.toilets,
+        ...allData.gasStations,
+        ...allData.restaurants
+    ];
+
+    const filteredData = filterData(combinedData, criteria);
     const markersToAdd = await filterAndMapNodes(filteredData);
     markersToAdd.forEach((marker) => markers.addLayer(marker));
     map.addLayer(markers);

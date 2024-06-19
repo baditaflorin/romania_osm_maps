@@ -1,3 +1,5 @@
+// config/config.go
+
 package config
 
 import (
@@ -14,7 +16,9 @@ type Config struct {
 	RedirectURI      string
 	AuthURL          string
 	TokenURL         string
-	Query            string
+	QueryToilets     string
+	QueryGasStations string
+	QueryRestaurants string
 	ChangesetComment string
 	CreatedBy        string
 	Port             string
@@ -33,7 +37,9 @@ func LoadConfig() *Config {
 		RedirectURI:      getRedirectURI(),
 		AuthURL:          getEnv("AUTH_URL"),
 		TokenURL:         getEnv("TOKEN_URL"),
-		Query:            getEnv("QUERY"),
+		QueryToilets:     getEnv("QUERY_TOILETS"),
+		QueryGasStations: getEnv("QUERY_GAS_STATIONS"),
+		QueryRestaurants: getEnv("QUERY_RESTAURANTS"),
 		ChangesetComment: getEnv("CHANGESET_COMMENT"),
 		CreatedBy:        getEnv("CREATED_BY"),
 		Port:             getEnvWithDefault("PORT", "8080"),

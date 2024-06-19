@@ -28,28 +28,45 @@ type Node struct {
 
 var Nodes Data
 
-func FetchNodes(cfg *config.Config, bbox string) {
+func fetchNodes(cfg *config.Config, query string, bbox string) (*Data, error) {
 	url := "https://overpass-api.de/api/interpreter"
-	query := strings.Replace(cfg.Query, "{{bbox}}", bbox, 1)
+	query = strings.Replace(query, "{{bbox}}", bbox, 1)
 
 	resp, err := http.Post(url, "text/plain", strings.NewReader(query))
 	if err != nil {
-		log.Fatalf("Error fetching data from Overpass API: %s", err)
+		return nil, fmt.Errorf("error fetching data from Overpass API: %s", err)
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalf("Error reading response from Overpass API: %s", err)
+		return nil, fmt.Errorf("error reading response from Overpass API: %s", err)
 	}
 
-	var tempNodes Data
-	err = json.Unmarshal(body, &tempNodes)
+	var data Data
+	err = json.Unmarshal(body, &data)
 	if err != nil {
-		log.Fatalf("Error parsing JSON: %s", err)
+		return nil, fmt.Errorf("error parsing JSON: %s", err)
+	}
+
+	return &data, nil
+}
+
+func FetchNodes(cfg *config.Config, bbox string) {
+	toilets, err := fetchNodes(cfg, cfg.QueryToilets, bbox)
+	if err != nil {
+		log.Fatalf("Error fetching toilets: %s", err)
+	}
+	gasStations, err := fetchNodes(cfg, cfg.QueryGasStations, bbox)
+	if err != nil {
+		log.Fatalf("Error fetching gas stations: %s", err)
+	}
+	restaurants, err := fetchNodes(cfg, cfg.QueryRestaurants, bbox)
+	if err != nil {
+		log.Fatalf("Error fetching restaurants: %s", err)
 	}
 
 	nodeMap := make(map[int64]Node)
-	for _, node := range tempNodes.Elements {
+	for _, node := range append(toilets.Elements, append(gasStations.Elements, restaurants.Elements...)...) {
 		if _, exists := nodeMap[node.ID]; !exists {
 			nodeMap[node.ID] = node
 		}
