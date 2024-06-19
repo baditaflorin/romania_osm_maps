@@ -155,9 +155,9 @@ const onMapClick = (e) => {
             ]},
         { tag: 'label', attrs: { for: 'access' }, children: [document.createTextNode('Access:')] },
         { tag: 'select', attrs: { id: 'access', name: 'access' }, children: [
+                createElement('option', { value: '' }, [document.createTextNode('')]),
                 createElement('option', { value: 'yes' }, [document.createTextNode('Yes')]),
                 createElement('option', { value: 'customers' }, [document.createTextNode('Customers')]),
-                createElement('option', { value: 'destination' }, [document.createTextNode('Destination')]),
                 createElement('option', { value: 'private' }, [document.createTextNode('Private')]),
                 createElement('option', { value: 'no' }, [document.createTextNode('No')])
             ]},
@@ -165,6 +165,7 @@ const onMapClick = (e) => {
         { tag: 'input', attrs: { type: 'checkbox', id: 'fee', name: 'fee' } },
         { tag: 'label', attrs: { for: 'toilets:paper_supplied' }, children: [document.createTextNode('Paper Supplied:')] },
         { tag: 'select', attrs: { id: 'toilets:paper_supplied', name: 'toilets:paper_supplied' }, children: [
+                createElement('option', { value: '' }, [document.createTextNode('')]),
                 createElement('option', { value: 'yes' }, [document.createTextNode('Yes')]),
                 createElement('option', { value: 'no' }, [document.createTextNode('No')])
             ]}
@@ -175,6 +176,7 @@ const onMapClick = (e) => {
         { tag: 'input', attrs: { type: 'checkbox', id: 'unisex', name: 'unisex' } },
         { tag: 'label', attrs: { for: 'wheelchair' }, children: [document.createTextNode('Wheelchair Accessibility:')] },
         { tag: 'select', attrs: { id: 'wheelchair', name: 'wheelchair' }, children: [
+                createElement('option', { value: '' }, [document.createTextNode('')]),
                 createElement('option', { value: 'yes' }, [document.createTextNode('Yes')]),
                 createElement('option', { value: 'limited' }, [document.createTextNode('Limited')]),
                 createElement('option', { value: 'no' }, [document.createTextNode('No')])
@@ -185,6 +187,7 @@ const onMapClick = (e) => {
         { tag: 'input', attrs: { type: 'text', id: 'opening_hours', name: 'opening_hours' } },
         { tag: 'label', attrs: { for: 'toilets:wheelchair' }, children: [document.createTextNode('Toilets Wheelchair Accessibility:')] },
         { tag: 'select', attrs: { id: 'toilets:wheelchair', name: 'toilets:wheelchair' }, children: [
+                createElement('option', { value: '' }, [document.createTextNode('')]),
                 createElement('option', { value: 'yes' }, [document.createTextNode('Yes')]),
                 createElement('option', { value: 'no' }, [document.createTextNode('No')])
             ]},
@@ -192,6 +195,7 @@ const onMapClick = (e) => {
         { tag: 'input', attrs: { type: 'checkbox', id: 'changing_table', name: 'changing_table' } },
         { tag: 'label', attrs: { for: 'toilets:disposal' }, children: [document.createTextNode('Disposal Method:')] },
         { tag: 'select', attrs: { id: 'toilets:disposal', name: 'toilets:disposal' }, children: [
+                createElement('option', { value: '' }, [document.createTextNode('')]),
                 createElement('option', { value: 'flush' }, [document.createTextNode('Flush')]),
                 createElement('option', { value: 'pitlatrine' }, [document.createTextNode('Pit Latrine')]),
                 createElement('option', { value: 'chemical' }, [document.createTextNode('Chemical')]),
@@ -202,28 +206,33 @@ const onMapClick = (e) => {
             ]},
         { tag: 'label', attrs: { for: 'toilets:position' }, children: [document.createTextNode('Position:')] },
         { tag: 'select', attrs: { id: 'toilets:position', name: 'toilets:position' }, children: [
+                createElement('option', { value: '' }, [document.createTextNode('')]),
                 createElement('option', { value: 'seated' }, [document.createTextNode('Seated')]),
                 createElement('option', { value: 'urinal' }, [document.createTextNode('Urinal')]),
                 createElement('option', { value: 'squat' }, [document.createTextNode('Squat')])
             ]},
         { tag: 'label', attrs: { for: 'toilets:hands_drying' }, children: [document.createTextNode('Hands Drying:')] },
         { tag: 'select', attrs: { id: 'toilets:hands_drying', name: 'toilets:hands_drying' }, children: [
+                createElement('option', { value: '' }, [document.createTextNode('')]),
                 createElement('option', { value: 'electric_hand_dryer' }, [document.createTextNode('Electric Hand Dryer')]),
                 createElement('option', { value: 'paper_towel' }, [document.createTextNode('Paper Towel')]),
                 createElement('option', { value: 'towel' }, [document.createTextNode('Towel')])
             ]},
         { tag: 'label', attrs: { for: 'toilets:handwashing' }, children: [document.createTextNode('Handwashing:')] },
         { tag: 'select', attrs: { id: 'toilets:handwashing', name: 'toilets:handwashing' }, children: [
+                createElement('option', { value: '' }, [document.createTextNode('')]),
                 createElement('option', { value: 'yes' }, [document.createTextNode('Yes')]),
                 createElement('option', { value: 'no' }, [document.createTextNode('No')])
             ]},
         { tag: 'label', attrs: { for: 'handwashing:soap' }, children: [document.createTextNode('Soap:')] },
         { tag: 'select', attrs: { id: 'handwashing:soap', name: 'handwashing:soap' }, children: [
+                createElement('option', { value: '' }, [document.createTextNode('')]),
                 createElement('option', { value: 'yes' }, [document.createTextNode('Yes')]),
                 createElement('option', { value: 'no' }, [document.createTextNode('No')])
             ]},
         { tag: 'label', attrs: { for: 'toilets:menstrual_products' }, children: [document.createTextNode('Menstrual Products:')] },
         { tag: 'select', attrs: { id: 'toilets:menstrual_products', name: 'toilets:menstrual_products' }, children: [
+                createElement('option', { value: '' }, [document.createTextNode('')]),
                 createElement('option', { value: 'yes' }, [document.createTextNode('Yes')]),
                 createElement('option', { value: 'limited' }, [document.createTextNode('Limited')]),
                 createElement('option', { value: 'no' }, [document.createTextNode('No')])
