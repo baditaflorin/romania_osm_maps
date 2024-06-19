@@ -1,6 +1,7 @@
 import { getUrlParameter, setUrlParameters, saveMapCenterToCookies, getUserPosition } from './utils.js';
 import { onMapClick, isAddingSource } from './addSource.js';
-import {fetchDataAndAddMarkers} from './data.js';
+import { fetchDataAndAddMarkers } from './data.js';
+import { populateFilters, setupFilterEventListeners } from './filters.js';
 
 const addGeolocateButton = (map) => {
     const container = document.getElementById('geolocate-container');
@@ -62,7 +63,6 @@ const addNewToiletSourceButton = (map) => {
     map.addControl(new addSourceControl({ position: 'bottomright' }));
 };
 
-
 const initializeMap = () => {
     const initialLat = parseFloat(getUrlParameter('lat')) || parseFloat(Cookies.get('mapLat')) || 45.9432;
     const initialLon = parseFloat(getUrlParameter('lon')) || parseFloat(Cookies.get('mapLon')) || 24.9668;
@@ -94,8 +94,6 @@ const initializeMap = () => {
 
     return map;
 };
-
-const mymap = initializeMap();
 
 const setupEventListeners = (map) => {
     document.getElementById('apply-filters').addEventListener('click', () => {
@@ -136,18 +134,25 @@ const setupEventListeners = (map) => {
     addNewToiletSourceButton(map);
 };
 
-const populateFilters = (topKeyValues) => {
-    const filtersContainer = document.getElementById('filters');
-    topKeyValues.forEach(([keyValue, count]) => {
-        const [key, value] = keyValue.split(':');
-        const filterId = `filter-${key}-${value}`;
-        const filterElement = document.createElement('div');
-        filterElement.innerHTML = `
-            <input type="checkbox" id="${filterId}" data-key="${key}" data-value="${value}">
-            <label for="${filterId}">${key}: ${value} (${count})</label>
-        `;
-        filtersContainer.appendChild(filterElement);
-    });
-};
+const mymap = initializeMap();
+
+document.addEventListener("DOMContentLoaded", async function() {
+    const bounds = mymap.getBounds();
+    const bbox = `${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()}`;
+
+    const response = await fetch(`/data?bbox=${bbox}`);
+    const data = await response.json();
+
+    // Get top key-value pairs
+    const topKeyValues = getTopKeyValues(data);
+    console.log('Top key-value pairs:', topKeyValues);
+
+    // Populate filters
+    populateFilters(topKeyValues);
+    setupFilterEventListeners(mymap);
+
+    // Initial load of markers without filters
+    fetchDataAndAddMarkers(mymap);
+});
 
 export { mymap, addGeolocateButton, initializeMap, addNewToiletSourceButton, setupEventListeners, populateFilters };
