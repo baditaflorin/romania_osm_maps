@@ -17,6 +17,7 @@ type Config struct {
 	AuthURL          string
 	TokenURL         string
 	QueryToilets     string
+	QueryToiletsPois string
 	QueryGasStations string
 	QueryRestaurants string
 	ChangesetComment string
@@ -38,6 +39,7 @@ func LoadConfig() *Config {
 		AuthURL:          getEnv("AUTH_URL"),
 		TokenURL:         getEnv("TOKEN_URL"),
 		QueryToilets:     getEnv("QUERY_TOILETS"),
+		QueryToiletsPois: getEnv("QUERY_TOILETS_POIS"),
 		QueryGasStations: getEnv("QUERY_GAS_STATIONS"),
 		QueryRestaurants: getEnv("QUERY_RESTAURANTS"),
 		ChangesetComment: getEnv("CHANGESET_COMMENT"),

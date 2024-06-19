@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="osm toilet - re-use changeset">
+    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="osm toilet - Add restaurants and gas stations">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/osm-toilet-map/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/osm-toilet-map/config/config.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/osm-toilet-map/handlers/handlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/osm-toilet-map/handlers/handlers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/osm-toilet-map/osm/osm.go" beforeDir="false" afterPath="$PROJECT_DIR$/osm-toilet-map/osm/osm.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/osm-toilet-map/static/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/osm-toilet-map/static/data.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -104,7 +103,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Check to not allow more than 1 node added when adding nodes" />
     <MESSAGE value="Fix #9" />
     <MESSAGE value="Make Query more broad to include possible drinking_water sources" />
     <MESSAGE value="Add dynamic filter to the map fix #12" />
@@ -129,7 +127,8 @@
     <MESSAGE value="osm toilet - Added emoji, ability to set custom css styles" />
     <MESSAGE value="osm toilet - add logging backend, edit in place works backend and frontend" />
     <MESSAGE value="osm toilet - re-use changeset" />
-    <option name="LAST_COMMIT_MESSAGE" value="osm toilet - re-use changeset" />
+    <MESSAGE value="osm toilet - Add restaurants and gas stations" />
+    <option name="LAST_COMMIT_MESSAGE" value="osm toilet - Add restaurants and gas stations" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

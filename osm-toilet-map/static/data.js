@@ -33,7 +33,7 @@ const icons = {
 };
 
 const getNodeTypeAndIcon = (node) => {
-    if (node.tags.amenity === 'toilets') {
+    if (node.tags.amenity === 'toilets' || node.tags.toilets === 'yes') {
         return { type: 'toilet', icon: icons.toilet };
     } else if (node.tags.amenity === 'fuel') {
         return { type: 'gasStation', icon: icons.gasStation };
@@ -180,6 +180,7 @@ export const fetchDataAndAddMarkers = async (map, criteria = {}) => {
             const response = await fetch(`/data?bbox=${bbox}`);
             const data = await response.json();
             allData.toilets = data.toilets;
+            allData.toiletsPois = data.toiletsPois;
             allData.gasStations = data.gasStations;
             allData.restaurants = data.restaurants;
         } catch (error) {
@@ -198,6 +199,7 @@ export const fetchDataAndAddMarkers = async (map, criteria = {}) => {
     // Combine all data into a single array for filtering and mapping
     const combinedData = [
         ...allData.toilets,
+        ...allData.toiletsPois,
         ...allData.gasStations,
         ...allData.restaurants
     ];

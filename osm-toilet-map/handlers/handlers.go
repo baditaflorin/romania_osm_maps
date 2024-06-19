@@ -138,6 +138,11 @@ func HandleData(cfg *config.Config) http.HandlerFunc {
 			http.Error(w, "Failed to fetch toilets: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
+		toiletsPois, err := fetchNodesByQuery(cfg, cfg.QueryToiletsPois, bbox)
+		if err != nil {
+			http.Error(w, "Failed to fetch toilets: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
 		gasStations, err := fetchNodesByQuery(cfg, cfg.QueryGasStations, bbox)
 		if err != nil {
 			http.Error(w, "Failed to fetch gas stations: "+err.Error(), http.StatusInternalServerError)
@@ -150,6 +155,7 @@ func HandleData(cfg *config.Config) http.HandlerFunc {
 		}
 
 		responseData := map[string]interface{}{
+			"toiletsPois": toiletsPois.Elements,
 			"toilets":     toilets.Elements,
 			"gasStations": gasStations.Elements,
 			"restaurants": restaurants.Elements,
