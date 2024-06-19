@@ -1,5 +1,4 @@
 // filters.js
-
 import { fetchDataAndAddMarkers } from './data.js';
 
 const createFilterElement = (key, value, count) => {
@@ -22,21 +21,7 @@ const populateFilters = (topKeyValues) => {
     });
 };
 
-// const populateFilters = (topKeyValues) => {
-//     const filtersContainer = document.getElementById('filters');
-//     topKeyValues.forEach(([keyValue, count]) => {
-//         const [key, value] = keyValue.split(':');
-//         const filterId = `filter-${key}-${value}`;
-//         const filterElement = document.createElement('div');
-//         filterElement.innerHTML = `
-//             <input type="checkbox" id="${filterId}" data-key="${key}" data-value="${value}">
-//             <label for="${filterId}">${key}: ${value} (${count})</label>
-//         `;
-//         filtersContainer.appendChild(filterElement);
-//     });
-// };
-
-const setupFilterEventListeners = () => {
+const setupFilterEventListeners = (map) => {
     document.getElementById('apply-filters').addEventListener('click', () => {
         const selectedFilters = Array.from(document.querySelectorAll('#filters input:checked')).map(input => ({
             key: input.getAttribute('data-key'),
@@ -51,12 +36,12 @@ const setupFilterEventListeners = () => {
             return criteria;
         }, {});
 
-        fetchDataAndAddMarkers(filterCriteria);
+        fetchDataAndAddMarkers(map, filterCriteria);
     });
 
     document.getElementById('clear-filters').addEventListener('click', () => {
         document.querySelectorAll('#filters input:checked').forEach(input => input.checked = false);
-        fetchDataAndAddMarkers(); // Fetch all data without any filters
+        fetchDataAndAddMarkers(map); // Fetch all data without any filters
     });
 
     document.getElementById('toggle-filters').addEventListener('click', () => {

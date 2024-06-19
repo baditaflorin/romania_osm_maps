@@ -1,6 +1,6 @@
 // filter.js
 
-const filterData = (data, criteria) => {
+export const filterData = (data, criteria) => {
     return data.filter(item => {
         return Object.entries(criteria).every(([key, value]) => {
             if (Array.isArray(value)) {

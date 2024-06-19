@@ -1,3 +1,4 @@
+// map.js
 import { getUrlParameter, setUrlParameters, saveMapCenterToCookies, getUserPosition } from './utils.js';
 import { onMapClick, isAddingSource } from './addSource.js';
 import { fetchDataAndAddMarkers } from './data.js';
@@ -95,45 +96,6 @@ const initializeMap = () => {
     return map;
 };
 
-const setupEventListeners = (map) => {
-    document.getElementById('apply-filters').addEventListener('click', () => {
-        const selectedFilters = Array.from(document.querySelectorAll('#filters input:checked')).map(input => ({
-            key: input.getAttribute('data-key'),
-            value: input.getAttribute('data-value')
-        }));
-
-        const filterCriteria = selectedFilters.reduce((criteria, filter) => {
-            if (!criteria[filter.key]) {
-                criteria[filter.key] = [];
-            }
-            criteria[filter.key].push(filter.value);
-            return criteria;
-        }, {});
-
-        fetchDataAndAddMarkers(map, filterCriteria);
-    });
-
-    document.getElementById('clear-filters').addEventListener('click', () => {
-        document.querySelectorAll('#filters input:checked').forEach(input => input.checked = false);
-        fetchDataAndAddMarkers(map);
-    });
-
-    document.getElementById('toggle-filters').addEventListener('click', () => {
-        const filtersContent = document.getElementById('filters-content');
-        const isHidden = filtersContent.style.display === 'none';
-        filtersContent.style.display = isHidden ? 'block' : 'none';
-        document.getElementById('toggle-filters').textContent = isHidden ? 'Hide Filters' : 'Show Filters';
-    });
-
-    document.getElementById('search-button').addEventListener('click', () => {
-        const query = document.getElementById('search-input').value;
-        searchLocation(query, map);
-    });
-
-    addGeolocateButton(map);
-    addNewToiletSourceButton(map);
-};
-
 const mymap = initializeMap();
 
 document.addEventListener("DOMContentLoaded", async function() {
@@ -152,7 +114,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     setupFilterEventListeners(mymap);
 
     // Initial load of markers without filters
-    fetchDataAndAddMarkers(mymap);
+    await fetchDataAndAddMarkers(mymap);
 });
 
-export { mymap, addGeolocateButton, initializeMap, addNewToiletSourceButton, setupEventListeners, populateFilters };
+export { mymap, addGeolocateButton, initializeMap, addNewToiletSourceButton, setupFilterEventListeners, populateFilters };

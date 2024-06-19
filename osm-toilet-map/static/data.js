@@ -2,8 +2,10 @@
 
 import { updateTitleAndCount } from "./utils.js";
 import { routeToNode } from "./routing.js";
+import {filterData} from "./filter.js";
 
 const markers = L.markerClusterGroup();
+let allData = []; // Store all fetched data
 
 const toiletIcon = L.icon({
     iconUrl: '/static/toilet_icon.png',
@@ -131,28 +133,38 @@ const filterAndMapNodes = async (data) => {
     return markers.filter(marker => marker !== null);
 };
 
+
 export const fetchDataAndAddMarkers = async (map, criteria = {}) => {
-    const bounds = map.getBounds();
-    const bbox = `${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()}`;
+    if (!map || typeof map.getBounds !== 'function') {
+        console.error('Invalid map object');
+        return;
+    }
 
-    try {
-        const response = await fetch(`/data?bbox=${bbox}`);
-        const data = await response.json();
+    if (allData.length === 0) {
+        const bounds = map.getBounds();
+        const bbox = `${bounds.getSouth()},${bounds.getWest()},${bounds.getNorth()},${bounds.getEast()}`;
 
-        markers.clearLayers();
-
-        if (map.getZoom() < 7) {
-            alert("Zoom in to see locations");
+        try {
+            const response = await fetch(`/data?bbox=${bbox}`);
+            allData = await response.json();
+        } catch (error) {
+            console.error('Error fetching data:', error);
             return;
         }
-
-        const markersToAdd = await filterAndMapNodes(data);
-        markersToAdd.forEach((marker) => markers.addLayer(marker));
-        map.addLayer(markers);
-
-        const updateTitle = updateTitleAndCount(markersToAdd.length);
-        updateTitle();
-    } catch (error) {
-        console.error('Error fetching data and adding markers:', error);
     }
+
+    markers.clearLayers();
+
+    if (map.getZoom() < 7) {
+        alert("Zoom in to see locations");
+        return;
+    }
+
+    const filteredData = filterData(allData, criteria);
+    const markersToAdd = await filterAndMapNodes(filteredData);
+    markersToAdd.forEach((marker) => markers.addLayer(marker));
+    map.addLayer(markers);
+
+    const updateTitle = updateTitleAndCount(markersToAdd.length);
+    updateTitle();
 };
