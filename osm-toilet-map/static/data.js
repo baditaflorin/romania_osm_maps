@@ -3,6 +3,7 @@
 import { updateTitleAndCount } from "./utils.js";
 import { routeToNode } from "./routing.js";
 import {filterData} from "./filter.js";
+import { fetchNodeDetails, updateNodeDetails, editInPlace } from './editInPlace.js';
 
 const markers = L.markerClusterGroup();
 let allData = []; // Store all fetched data
@@ -62,16 +63,20 @@ const createPopupContent = async (node, denumire) => {
     }
     const div = document.createElement('div');
     div.className = 'popup-content';
+    div.setAttribute('data-node-id', node.id); // Set node ID as data attribute
     div.innerHTML = `
         <b>${denumire}</b><br>
         ${formatTags(node.tags)}
         <div class="mapillary-thumbnail">${mapillaryLink}</div>
         <a href="#" class="edit-link" data-node-id="${node.id}">Edit this node</a><br>
+        <a href="#" class="edit-in-place-link" data-node-id="${node.id}">Edit In place</a><br>
         <button class="route-button" data-lat="${node.lat}" data-lon="${node.lon}">Route to here</button>
     `;
 
     return div;
 };
+
+
 
 const editNode = (nodeId) => {
     const hasSeenEditModal = Cookies.get('hasSeenEditModal');
@@ -96,6 +101,10 @@ const createMarker = async (node) => {
             event.preventDefault();
             editNode(event.target.dataset.nodeId);
         });
+        popupElement.querySelector('.edit-in-place-link').addEventListener('click', (event) => {
+            event.preventDefault();
+            editInPlace(event.target.dataset.nodeId);
+        });
         popupElement.querySelector('.route-button').addEventListener('click', (event) => {
             const lat = parseFloat(event.target.dataset.lat);
             const lon = parseFloat(event.target.dataset.lon);
@@ -105,6 +114,7 @@ const createMarker = async (node) => {
 
     return marker;
 };
+
 
 const filterAndMapNodes = async (data) => {
     const seenNodeIds = new Set();

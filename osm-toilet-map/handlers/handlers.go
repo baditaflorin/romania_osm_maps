@@ -3,14 +3,85 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"strconv"
 	"toilet_map/config"
 	"toilet_map/oauth"
 	"toilet_map/osm"
 
 	"golang.org/x/oauth2"
 )
+
+func HandleFetchNode(cfg *config.Config) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		nodeIDStr, ok := vars["id"]
+		if !ok {
+			http.Error(w, "Node ID is required", http.StatusBadRequest)
+			return
+		}
+		nodeID, err := strconv.ParseInt(nodeIDStr, 10, 64)
+		if err != nil {
+			http.Error(w, "Invalid Node ID", http.StatusBadRequest)
+			return
+		}
+
+		node, err := osm.FetchNodeDetails(cfg, nodeID)
+		if err != nil {
+			http.Error(w, "Failed to fetch node details: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(node)
+	}
+}
+
+func HandleUpdateNode(cfg *config.Config) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Get the node ID from the URL
+		nodeIDStr := r.URL.Path[len("/updateNode/"):]
+		log.Printf("Received request to update node with ID: %s", nodeIDStr)
+		nodeID, err := strconv.ParseInt(nodeIDStr, 10, 64)
+		if err != nil {
+			log.Printf("Error parsing node ID: %v", err)
+			http.Error(w, "Invalid Node ID", http.StatusBadRequest)
+			return
+		}
+
+		// Parse the incoming JSON payload
+		var updatedTags map[string]string
+		if err := json.NewDecoder(r.Body).Decode(&updatedTags); err != nil {
+			log.Printf("Error parsing request body: %v", err)
+			http.Error(w, "Failed to parse request body: "+err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		log.Printf("Updating node %d with tags: %v", nodeID, updatedTags)
+
+		// Retrieve the OAuth token from the session
+		session, _ := oauth.Store.Get(r, "session-name")
+		token, ok := session.Values["oauth-token"].(*oauth2.Token)
+		if !ok {
+			log.Println("OAuth token not found in session")
+			http.Error(w, "You are not authenticated. Please log in to update a node.", http.StatusUnauthorized)
+			return
+		}
+
+		// Update the node details using the OSM package
+		err = osm.UpdateNodeDetails(cfg, token, nodeID, updatedTags)
+		if err != nil {
+			log.Printf("Error updating node details: %v", err)
+			http.Error(w, "Failed to update node details: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		fmt.Fprintf(w, "Node updated successfully")
+		log.Printf("Node %d updated successfully", nodeID)
+	}
+}
 
 func HandleData(cfg *config.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

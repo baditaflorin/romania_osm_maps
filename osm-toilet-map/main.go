@@ -32,7 +32,9 @@ func initializeRoutes(router *mux.Router, cfg *config.Config) {
 	router.HandleFunc("/data", handlers.HandleData(cfg)).Methods("GET")
 	router.HandleFunc("/login", handlers.HandleLogin(cfg)).Methods("GET")
 	router.HandleFunc("/callback", handlers.HandleCallback(cfg)).Methods("GET")
-	router.HandleFunc("/addnode", handlers.HandleAddNode(cfg))
+	router.HandleFunc("/addnode", handlers.HandleAddNode(cfg)).Methods("POST")
+	router.HandleFunc("/node/{id:[0-9]+}", handlers.HandleFetchNode(cfg)).Methods("GET")         // Updated route for fetching node details
+	router.HandleFunc("/updateNode/{id:[0-9]+}", handlers.HandleUpdateNode(cfg)).Methods("POST") // Add this line
 }
 
 func startServer(port string) {

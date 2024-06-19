@@ -17,21 +17,17 @@ func CreateRequest(method, url, contentType string, body []byte) (*http.Request,
 	return req, nil
 }
 
-func DoRequest(client *http.Client, req *http.Request) ([]byte, error) {
+func DoRequest(client *http.Client, req *http.Request) (*http.Response, error) {
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %v", err)
 	}
-	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("request failed: status code %d", resp.StatusCode)
+		body, _ := ioutil.ReadAll(resp.Body)
+		defer resp.Body.Close()
+		return resp, fmt.Errorf("request failed: status code %d, body: %s", resp.StatusCode, string(body))
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read response body: %v", err)
-	}
-
-	return body, nil
+	return resp, nil
 }

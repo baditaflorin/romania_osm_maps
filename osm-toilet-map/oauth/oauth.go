@@ -4,6 +4,7 @@ package oauth
 import (
 	"encoding/gob"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"toilet_map/config"
@@ -70,17 +71,27 @@ func CreateChangeset(cfg *config.Config, token *oauth2.Token) (int, error) {
 	client := Oauth2Config.Client(oauth2.NoContext, token)
 	req, err := createChangesetRequest(cfg, token)
 	if err != nil {
+		log.Printf("Failed to create changeset request: %v", err)
 		return 0, err
 	}
 	req.Header.Set("Authorization", "Bearer "+token.AccessToken)
 
-	body, err := utils.DoRequest(client, req)
+	log.Println("Sending changeset creation request")
+	resp, err := utils.DoRequest(client, req)
 	if err != nil {
+		log.Printf("Error creating changeset: %v", err)
+		return 0, err
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("Error reading changeset response body: %v", err)
 		return 0, err
 	}
 
 	var changesetID int
 	fmt.Sscanf(string(body), "%d", &changesetID)
+	log.Printf("Created changeset with ID: %d", changesetID)
 
 	return changesetID, nil
 }
@@ -91,11 +102,18 @@ func CloseChangeset(token *oauth2.Token, changesetID int) error {
 
 	req, err := utils.CreateRequest("PUT", endpointURL, "text/xml", nil)
 	if err != nil {
+		log.Printf("Failed to create close changeset request: %v", err)
 		return fmt.Errorf("failed to create request: %v", err)
 	}
 	req.Header.Set("Authorization", "Bearer "+token.AccessToken)
 
+	log.Printf("Sending close changeset request for changeset ID: %d", changesetID)
 	_, err = utils.DoRequest(client, req)
+	if err != nil {
+		log.Printf("Error closing changeset: %v", err)
+	} else {
+		log.Printf("Successfully closed changeset ID: %d", changesetID)
+	}
 	return err
 }
 
