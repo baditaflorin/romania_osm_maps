@@ -4,11 +4,8 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="osm toilet - Add restaurants and gas stations">
+    <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="osm toilet - Allow edit in place of different tags, close pop-up after save">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/osm-toilet-map/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/osm-toilet-map/config/config.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/osm-toilet-map/handlers/handlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/osm-toilet-map/handlers/handlers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/osm-toilet-map/static/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/osm-toilet-map/static/data.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -103,8 +100,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fix #9" />
-    <MESSAGE value="Make Query more broad to include possible drinking_water sources" />
     <MESSAGE value="Add dynamic filter to the map fix #12" />
     <MESSAGE value="Add back Geolocation button, show hide filter on same position" />
     <MESSAGE value="Change color schema, increase filter to 200" />
@@ -128,7 +123,9 @@
     <MESSAGE value="osm toilet - add logging backend, edit in place works backend and frontend" />
     <MESSAGE value="osm toilet - re-use changeset" />
     <MESSAGE value="osm toilet - Add restaurants and gas stations" />
-    <option name="LAST_COMMIT_MESSAGE" value="osm toilet - Add restaurants and gas stations" />
+    <MESSAGE value="osm toilet - Load all POIS that have the toilets=yes tag added" />
+    <MESSAGE value="osm toilet - Allow edit in place of different tags, close pop-up after save" />
+    <option name="LAST_COMMIT_MESSAGE" value="osm toilet - Allow edit in place of different tags, close pop-up after save" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
