@@ -60,45 +60,6 @@ const createElement = (tag, attrs = {}, children = [], style = '') => {
     return element;
 };
 
-// const editInPlace = async (nodeId) => {
-//     const nodeDetails = await fetchNodeDetails(nodeId);
-//     if (!nodeDetails) return;
-//
-//     const popupContent = document.querySelector(`.popup-content[data-node-id="${nodeId}"]`);
-//     if (!popupContent) return;
-//
-//     const form = document.createElement('form');
-//     form.className = 'edit-in-place-form';
-//
-//     Object.entries(nodeDetails.tags).forEach(([key, value]) => {
-//         const label = document.createElement('label');
-//         label.textContent = key;
-//         const input = document.createElement('input');
-//         input.type = 'text';
-//         input.name = key;
-//         input.value = value;
-//         form.appendChild(label);
-//         form.appendChild(input);
-//     });
-//
-//     const saveButton = document.createElement('button');
-//     saveButton.type = 'submit';
-//     saveButton.textContent = 'Save';
-//     form.appendChild(saveButton);
-//
-//     form.addEventListener('submit', (event) => {
-//         event.preventDefault();
-//         const formData = new FormData(form);
-//         const updatedTags = {};
-//         formData.forEach((value, key) => {
-//             updatedTags[key] = value;
-//         });
-//         updateNodeDetails(nodeId, updatedTags);
-//     });
-//
-//     popupContent.innerHTML = '';
-//     popupContent.appendChild(form);
-// };
 
 const editInPlace = async (nodeId) => {
     const nodeDetails = await fetchNodeDetails(nodeId);
@@ -139,7 +100,7 @@ const editInPlace = async (nodeId) => {
     }
 
     const additionalFieldsData = [
-        { tag: 'label', attrs: { for: 'toilets:access' }, style: 'font-size: x-large',children: [document.createTextNode('🔓')] },
+        { tag: 'label', attrs: { for: 'toilets:access' }, style: 'font-size: x-large', children: [document.createTextNode('🔓')] },
         { tag: 'select', attrs: { id: 'toilets:access', name: 'toilets:access' }, children: [
                 createElement('option', { value: 'yes' }, [document.createTextNode('🔓Yes')]),
                 createElement('option', { value: 'customers' }, [document.createTextNode('🔐Customers')]),
@@ -148,7 +109,7 @@ const editInPlace = async (nodeId) => {
             ]},
         { tag: 'label', attrs: { for: 'toilets:fee' }, style: 'font-size: x-large', children: [document.createTextNode('💶')] },
         { tag: 'input', attrs: { type: 'checkbox', id: 'toilets:fee', name: 'fee' } },
-        { tag: 'label', attrs: { for: 'toilets:paper_supplied' }, style: 'font-size: x-large' ,children: [document.createTextNode('🧻')] },
+        { tag: 'label', attrs: { for: 'toilets:paper_supplied' }, style: 'font-size: x-large', children: [document.createTextNode('🧻')] },
         { tag: 'select', attrs: { id: 'toilets:paper_supplied', name: 'toilets:paper_supplied' }, children: [
                 createElement('option', { value: 'no' }, [document.createTextNode('No')]),
                 createElement('option', { value: 'yes' }, [document.createTextNode('Yes')]),
@@ -190,12 +151,21 @@ const editInPlace = async (nodeId) => {
         formData.forEach((value, key) => {
             updatedTags[key] = value;
         });
+
+        // Check toilets:access value and set toilets tag accordingly
+        if (updatedTags['toilets:access'] === 'no' || updatedTags['toilets:access'] === 'private') {
+            updatedTags['toilets'] = 'no';
+        } else if (!updatedTags['toilets']) {
+            updatedTags['toilets'] = 'yes';
+        }
+
         await updateNodeDetails(nodeId, updatedTags);
     });
 
     popupContent.innerHTML = '';
     popupContent.appendChild(form);
 };
+
 
 export { fetchNodeDetails, updateNodeDetails, editInPlace };
 

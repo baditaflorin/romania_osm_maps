@@ -5,11 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="574a1b97-16f7-4ce1-94d4-63258828ba9a" name="Changes" comment="osm toilet - Allow edit in place of different tags, close pop-up after save">
-      <change afterPath="$PROJECT_DIR$/osm-toilet-map/static/question_mark_icon.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/osm-toilet-map/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/osm-toilet-map/config/config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/osm-toilet-map/handlers/handlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/osm-toilet-map/handlers/handlers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/osm-toilet-map/osm/osm.go" beforeDir="false" afterPath="$PROJECT_DIR$/osm-toilet-map/osm/osm.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/osm-toilet-map/static/data.js" beforeDir="false" afterPath="$PROJECT_DIR$/osm-toilet-map/static/data.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/osm-toilet-map/static/editInPlace.js" beforeDir="false" afterPath="$PROJECT_DIR$/osm-toilet-map/static/editInPlace.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/osm-toilet-map/static/search.js" beforeDir="false" afterPath="$PROJECT_DIR$/osm-toilet-map/static/search.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/osm-toilet-map/static/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/osm-toilet-map/static/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/osm-toilet-map/static/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/osm-toilet-map/static/utils.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

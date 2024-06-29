@@ -7,8 +7,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strings"
-
 	"toilet_map/config"
 	"toilet_map/utils"
 )
@@ -27,56 +25,6 @@ type Node struct {
 }
 
 var Nodes Data
-
-func fetchNodes(cfg *config.Config, query string, bbox string) (*Data, error) {
-	url := "https://overpass-api.de/api/interpreter"
-	query = strings.Replace(query, "{{bbox}}", bbox, 1)
-
-	resp, err := http.Post(url, "text/plain", strings.NewReader(query))
-	if err != nil {
-		return nil, fmt.Errorf("error fetching data from Overpass API: %s", err)
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("error reading response from Overpass API: %s", err)
-	}
-
-	var data Data
-	err = json.Unmarshal(body, &data)
-	if err != nil {
-		return nil, fmt.Errorf("error parsing JSON: %s", err)
-	}
-
-	return &data, nil
-}
-
-func FetchNodes(cfg *config.Config, bbox string) {
-	toilets, err := fetchNodes(cfg, cfg.QueryToilets, bbox)
-	if err != nil {
-		log.Fatalf("Error fetching toilets: %s", err)
-	}
-	gasStations, err := fetchNodes(cfg, cfg.QueryGasStations, bbox)
-	if err != nil {
-		log.Fatalf("Error fetching gas stations: %s", err)
-	}
-	restaurants, err := fetchNodes(cfg, cfg.QueryRestaurants, bbox)
-	if err != nil {
-		log.Fatalf("Error fetching restaurants: %s", err)
-	}
-
-	nodeMap := make(map[int64]Node)
-	for _, node := range append(toilets.Elements, append(gasStations.Elements, restaurants.Elements...)...) {
-		if _, exists := nodeMap[node.ID]; !exists {
-			nodeMap[node.ID] = node
-		}
-	}
-
-	Nodes.Elements = make([]Node, 0, len(nodeMap))
-	for _, node := range nodeMap {
-		Nodes.Elements = append(Nodes.Elements, node)
-	}
-}
 
 func FetchNodeDetails(cfg *config.Config, nodeID int64) (*Node, error) {
 	url := fmt.Sprintf("https://api.openstreetmap.org/api/0.6/node/%d.json", nodeID)

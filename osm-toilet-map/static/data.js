@@ -16,6 +16,20 @@ const icons = {
         popupAnchor: [0, -28],
         className: 'toilet-icon' // Class for toilet icon
     }),
+    toiletNo: L.icon({
+        iconUrl: '/static/toilet_icon.png', // This is your new red icon
+        iconSize: [30, 30],
+        iconAnchor: [16, 37],
+        popupAnchor: [0, -28],
+        className: 'toilet-no-icon'
+    }),
+    toiletCustomers: L.icon({
+        iconUrl: '/static/toilet_icon.png', // This is your new orange icon
+        iconSize: [32, 35],
+        iconAnchor: [16, 37],
+        popupAnchor: [0, -28],
+        className: 'toilet-customers-icon'
+    }),
     gasStation: L.icon({
         iconUrl: '/static/gas_station_icon.png',
         iconSize: [32, 37],
@@ -32,7 +46,7 @@ const icons = {
     }),
     unknown: L.icon({
         iconUrl: '/static/question_mark_icon.png', // Add your question mark icon here
-        iconSize: [32, 37],
+        iconSize: [25, 25],
         iconAnchor: [16, 37],
         popupAnchor: [0, -28],
         className: 'unknown-icon' // Class for unknown icon
@@ -41,20 +55,23 @@ const icons = {
 
 
 const getNodeTypeAndIcon = (node) => {
-    if (node.tags.toilets === 'yes') {
-        if (node.tags.amenity === 'fuel') {
+    if (node.tags.toilets === 'no') {
+        return { type: 'toiletNo', icon: icons.toiletNo };
+    } else if (node.tags.toilets === 'yes' || node.tags.amenity === 'toilets') {
+        if (node.tags['toilets:access'] === 'customers' || node.tags.access === 'customers') {
+            return { type: 'toiletCustomers', icon: icons.toiletCustomers }; // Use orange icon for toilets with access: customers
+        } else if (node.tags.amenity === 'fuel') {
             return { type: 'gasStation', icon: icons.toilet }; // Display toilet icon but indicate gas station type
         } else if (node.tags.amenity === 'restaurant') {
             return { type: 'restaurant', icon: icons.toilet }; // Display toilet icon but indicate restaurant type
         } else {
             return { type: 'toilet', icon: icons.toilet }; // Default to toilet type
         }
-    } else if (node.tags.amenity === 'toilets') {
-        return { type: 'toilet', icon: icons.toilet };
     } else {
         return { type: 'unknown', icon: icons.unknown }; // Use unknown icon for other nodes
     }
 };
+
 
 
 
@@ -203,6 +220,8 @@ export const fetchDataAndAddMarkers = async (map, criteria = {}) => {
             const data = await response.json();
             allData.toilets = data.toilets;
             allData.toiletsPois = data.toiletsPois;
+            allData.tourismPois = data.tourismPois;
+            allData.shopPois = data.shopPois;
             allData.gasStations = data.gasStations;
             allData.restaurants = data.restaurants;
         } catch (error) {
@@ -222,6 +241,8 @@ export const fetchDataAndAddMarkers = async (map, criteria = {}) => {
     const combinedData = [
         ...allData.toilets,
         ...allData.toiletsPois,
+        ...allData.shopPois,
+        ...allData.tourismPois,
         ...allData.gasStations,
         ...allData.restaurants
     ];

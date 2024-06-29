@@ -14,6 +14,18 @@ html, body {
     background-color: green; /* Set background color to green for toilets */
 }
 
+.toilet-no-icon {
+    border-radius: 50%;
+    box-shadow: 0 0 5px #000;
+    background-color: red; /* Set background color to red for toilets with no */
+}
+
+.toilet-customers-icon {
+    border-radius: 50%;
+    box-shadow: 0 0 5px #000;
+    background-color: orange; /* Set background color to orange for toilets with access: customers */
+}
+
 .gas-station-icon {
     border-radius: 50%;
     box-shadow: 0 0 5px #000;

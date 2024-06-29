@@ -112,19 +112,6 @@ func fetchNodesByQuery(cfg *config.Config, query string, bbox string) (*osm.Data
 	return &data, nil
 }
 
-//func HandleData(cfg *config.Config) http.HandlerFunc {
-//	return func(w http.ResponseWriter, r *http.Request) {
-//		bbox := r.URL.Query().Get("bbox")
-//		if bbox == "" {
-//			http.Error(w, "Bounding box is required", http.StatusBadRequest)
-//			return
-//		}
-//		osm.FetchNodes(cfg, bbox)
-//		w.Header().Set("Content-Type", "application/json")
-//		json.NewEncoder(w).Encode(osm.Nodes.Elements)
-//	}
-//}
-
 func HandleData(cfg *config.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		bbox := r.URL.Query().Get("bbox")
@@ -153,12 +140,24 @@ func HandleData(cfg *config.Config) http.HandlerFunc {
 			http.Error(w, "Failed to fetch restaurants: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
+		tourismPois, err := fetchNodesByQuery(cfg, cfg.QueryTourismPois, bbox)
+		if err != nil {
+			http.Error(w, "Failed to fetch restaurants: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		shopPois, err := fetchNodesByQuery(cfg, cfg.QueryShopPois, bbox)
+		if err != nil {
+			http.Error(w, "Failed to fetch restaurants: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		responseData := map[string]interface{}{
 			"toiletsPois": toiletsPois.Elements,
 			"toilets":     toilets.Elements,
 			"gasStations": gasStations.Elements,
 			"restaurants": restaurants.Elements,
+			"tourismPois": tourismPois.Elements,
+			"shopPois":    shopPois.Elements,
 		}
 
 		w.Header().Set("Content-Type", "application/json")

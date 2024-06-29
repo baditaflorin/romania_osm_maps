@@ -18,6 +18,8 @@ type Config struct {
 	TokenURL         string
 	QueryToilets     string
 	QueryToiletsPois string
+	QueryTourismPois string
+	QueryShopPois    string
 	QueryGasStations string
 	QueryRestaurants string
 	ChangesetComment string
@@ -42,6 +44,8 @@ func LoadConfig() *Config {
 		QueryToiletsPois: getEnv("QUERY_TOILETS_POIS"),
 		QueryGasStations: getEnv("QUERY_GAS_STATIONS"),
 		QueryRestaurants: getEnv("QUERY_RESTAURANTS"),
+		QueryTourismPois: getEnv("QUERY_TOURISM_POIS"),
+		QueryShopPois:    getEnv("QUERY_SHOP_POIS"),
 		ChangesetComment: getEnv("CHANGESET_COMMENT"),
 		CreatedBy:        getEnv("CREATED_BY"),
 		Port:             getEnvWithDefault("PORT", "8080"),
