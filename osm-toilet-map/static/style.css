@@ -11,7 +11,27 @@ html, body {
 .toilet-icon {
     border-radius: 50%;
     box-shadow: 0 0 5px #000;
+    background-color: green; /* Set background color to green for toilets */
 }
+
+.gas-station-icon {
+    border-radius: 50%;
+    box-shadow: 0 0 5px #000;
+    background-color: blue; /* Set background color to blue for gas stations */
+}
+
+.restaurant-icon {
+    border-radius: 50%;
+    box-shadow: 0 0 5px #000;
+    background-color: orange; /* Set background color to orange for restaurants */
+}
+
+.unknown-icon {
+    border-radius: 50%;
+    box-shadow: 0 0 5px #000;
+    background-color: red; /* Set background color to red for unknown */
+}
+
 
 #mapid {
     width: 100vw;

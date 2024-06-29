@@ -14,33 +14,46 @@ const icons = {
         iconSize: [32, 37],
         iconAnchor: [16, 37],
         popupAnchor: [0, -28],
-        className: 'toilet-icon'
+        className: 'toilet-icon' // Class for toilet icon
     }),
     gasStation: L.icon({
         iconUrl: '/static/gas_station_icon.png',
         iconSize: [32, 37],
         iconAnchor: [16, 37],
         popupAnchor: [0, -28],
-        className: 'gas-station-icon'
+        className: 'gas-station-icon' // Class for gas station icon
     }),
     restaurant: L.icon({
         iconUrl: '/static/restaurant_icon.png',
         iconSize: [32, 37],
         iconAnchor: [16, 37],
         popupAnchor: [0, -28],
-        className: 'restaurant-icon'
+        className: 'restaurant-icon' // Class for restaurant icon
+    }),
+    unknown: L.icon({
+        iconUrl: '/static/question_mark_icon.png', // Add your question mark icon here
+        iconSize: [32, 37],
+        iconAnchor: [16, 37],
+        popupAnchor: [0, -28],
+        className: 'unknown-icon' // Class for unknown icon
     })
 };
 
+
 const getNodeTypeAndIcon = (node) => {
-    if (node.tags.amenity === 'toilets' || node.tags.toilets === 'yes') {
+    if (node.tags.toilets === 'yes') {
+        if (node.tags.amenity === 'fuel') {
+            return { type: 'gasStation', icon: icons.toilet }; // Display toilet icon but indicate gas station type
+        } else if (node.tags.amenity === 'restaurant') {
+            return { type: 'restaurant', icon: icons.toilet }; // Display toilet icon but indicate restaurant type
+        } else {
+            return { type: 'toilet', icon: icons.toilet }; // Default to toilet type
+        }
+    } else if (node.tags.amenity === 'toilets') {
         return { type: 'toilet', icon: icons.toilet };
-    } else if (node.tags.amenity === 'fuel') {
-        return { type: 'gasStation', icon: icons.gasStation };
-    } else if (node.tags.amenity === 'restaurant') {
-        return { type: 'restaurant', icon: icons.restaurant };
+    } else {
+        return { type: 'unknown', icon: icons.unknown }; // Use unknown icon for other nodes
     }
-    return null;
 };
 
 
@@ -92,6 +105,14 @@ const createPopupContent = async (node, denumire) => {
         <button class="route-button" data-lat="${node.lat}" data-lon="${node.lon}">Route to here</button>
     `;
 
+    // Add a question mark if the node is unknown
+    if (denumire === 'unknown') {
+        const questionMark = document.createElement('span');
+        questionMark.textContent = '?';
+        questionMark.style.color = 'red';
+        div.appendChild(questionMark);
+    }
+
     return div;
 };
 
@@ -113,7 +134,7 @@ const createMarker = async (node) => {
     const { type, icon } = getNodeTypeAndIcon(node) || {};
     if (!type || !icon) return null;
     const popupContent = await createPopupContent(node, type);
-    const marker = L.marker([node.lat, node.lon], { icon }).bindPopup(popupContent);
+    const marker = L.marker([node.lat, node.lon], { icon, node }).bindPopup(popupContent);
 
     marker.on('popupopen', () => {
         const popupElement = marker.getPopup().getElement();
@@ -134,6 +155,7 @@ const createMarker = async (node) => {
 
     return marker;
 };
+
 
 
 
@@ -209,6 +231,6 @@ export const fetchDataAndAddMarkers = async (map, criteria = {}) => {
     markersToAdd.forEach((marker) => markers.addLayer(marker));
     map.addLayer(markers);
 
-    const updateTitle = updateTitleAndCount(markersToAdd.length);
-    updateTitle();
+    updateTitleAndCount(markers);
 };
+

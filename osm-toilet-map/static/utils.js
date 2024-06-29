@@ -17,13 +17,25 @@ export const setUrlParameters = (params) => {
     window.history.replaceState({}, '', `${baseUrl}?${urlParams.toString()}`);
 };
 
-export const updateTitleAndCount = (count) => {
-    return () => {
-        const titleElement = document.getElementById('title');
-        const newTitle = `Public Toilets: ${count} locations found`;
-        titleElement.textContent = newTitle;
-    };
+export const updateTitleAndCount = (markers) => {
+    let knownToiletsCount = 0;
+    let unknownCount = 0;
+
+    markers.eachLayer(marker => {
+        const node = marker.options.node; // Store the node in marker options
+        if (node && (node.tags.amenity === 'toilets' || node.tags.toilets === 'yes')) {
+            knownToiletsCount++;
+        } else {
+            unknownCount++;
+        }
+    });
+
+    const titleElement = document.getElementById('title');
+    const newTitle = `Public Toilets: ${knownToiletsCount} locations found, ${unknownCount} unknown`;
+    titleElement.textContent = newTitle;
 };
+
+
 
 
 export const getStepInstruction = (step) => {
