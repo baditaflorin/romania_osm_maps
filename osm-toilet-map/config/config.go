@@ -70,7 +70,7 @@ func getEnvWithDefault(key, defaultValue string) string {
 
 func getRedirectURI() string {
 	redirectURIBase := getEnv("REDIRECT_URI_BASE")
-	port := getEnvWithDefault("PORT", "8080")
+	// port := getEnvWithDefault("PORT", "8080")
 	redirectURICallback := getEnv("REDIRECT_URI_CALLBACK")
-	return fmt.Sprintf("%s:%s%s", redirectURIBase, port, redirectURICallback)
+	return fmt.Sprintf("%s%s", redirectURIBase, redirectURICallback)
 }
