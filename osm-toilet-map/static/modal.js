@@ -1,4 +1,4 @@
-const showModal = (onConfirm, isEdit = false, editUrl = '') => {
+export const showModal = (onConfirm, isEdit = false, editUrl = '') => {
     const modal = document.getElementById('source-modal');
     modal.style.display = 'block';
 
@@ -24,7 +24,7 @@ const showModal = (onConfirm, isEdit = false, editUrl = '') => {
     };
 };
 
-const hideModal = () => {
+export const hideModal = () => {
     const modal = document.getElementById('source-modal');
     modal.style.display = 'none';
 };

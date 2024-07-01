@@ -3,6 +3,8 @@ import { getUrlParameter, setUrlParameters, saveMapCenterToCookies, getUserPosit
 import { onMapClick, isAddingSource } from './addSource.js';
 import { fetchDataAndAddMarkers } from './data.js';
 import { populateFilters, setupFilterEventListeners } from './filters.js';
+import { showModal } from './modal.js';
+
 
 const addGeolocateButton = (map) => {
     const container = document.getElementById('geolocate-container');
